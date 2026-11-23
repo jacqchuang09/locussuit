@@ -621,10 +621,72 @@ table.cmp { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 
   .hero-in { margin-top: -40px; padding-bottom: 32px; } .hero-in > * { max-width: none; }
   .hero-stat { padding: 0 14px; }
 }
+/* ---------- live demo page ---------- */
+#demo { align-items: stretch; padding-block: calc(var(--nav-h) + 20px) 24px; }
+#demo .demo-in { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 24px; height: calc(100svh - var(--nav-h) - 44px); width: 100%; }
+#demo .demo-side { display: flex; flex-direction: column; min-height: 0; overflow: auto; padding-right: 4px; }
+#demo .demo-kick { font-size: 11.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; margin: 0 0 6px; }
+#demo .demo-side h2 { font-size: clamp(26px, 2.4vw, 34px); margin: 0 0 14px; }
+#demoTabs { display: grid; gap: 6px; }
+#demoTabs button { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: center; text-align: left; border: 0; cursor: pointer; background: var(--demo-tab, rgba(0,0,0,.05)); color: inherit; padding: 10px 12px; font: inherit; border-radius: var(--demo-r, 14px); transition: background .2s, color .2s; }
+#demoTabs button i { font-style: normal; font-size: 13px; text-align: center; color: var(--demo-accent, #ff3056); }
+#demoTabs button b { display: block; font-size: 14.5px; }
+#demoTabs button small { display: block; font-size: 12px; opacity: .65; }
+#demoTabs button:hover { background: var(--demo-tab-h, rgba(0,0,0,.09)); }
+#demoTabs button[aria-pressed="true"] { background: var(--demo-on, #141419); color: #fff; }
+#demoTabs button[aria-pressed="true"] small { opacity: .75; }
+#demoAside { margin-top: 14px; display: grid; gap: 10px; flex: none; }
+#demoAside > * { max-width: 100%; margin: 0 !important; }
+#demoCap { margin-top: auto; padding-top: 10px; font-size: 12px; opacity: .6; }
+.demo-stage { position: relative; min-width: 0; min-height: 0; height: 100%; display: flex; flex-direction: column; gap: 10px; }
+.demo-stage > * { width: 100% !important; max-width: none !important; margin: 0 !important; }
+.demo-stage > *:first-child { flex: 1 1 auto; min-height: 0; }
+@media (max-height: 820px) and (min-width: 900px) {
+  #demoTabs button small { display: none; }
+  #demoTabs button { padding: 8px 12px; }
+  #demo .demo-side h2 { font-size: 24px; margin-bottom: 10px; }
+  #demoAside { margin-top: 10px; }
+}
+@media (max-width: 899px) {
+  #demo .demo-in { display: flex; flex-direction: column; gap: 12px; height: auto; }
+  #demo .demo-side { display: contents; }
+  #demo .demo-kick { order: 0; } #demo .demo-side h2 { order: 1; margin: 0; }
+  #demoTabs { order: 2; display: flex; overflow-x: auto; gap: 6px; margin: 0 -16px; padding: 0 16px 4px; scrollbar-width: none; }
+  #demoTabs::-webkit-scrollbar { display: none; }
+  #demoTabs button { flex: 0 0 auto; grid-template-columns: auto; padding: 9px 14px; border-radius: 999px; }
+  #demoTabs button i:empty, #demoTabs button small { display: none; }
+  #demoTabs button:has(i:not(:empty)) { grid-template-columns: auto auto; gap: 6px; }
+  .demo-stage { order: 3; height: 68svh; }
+  #demoAside { order: 4; margin: 0; } #demoCap { order: 5; margin: 0; padding: 0; }
+}
+
+.nav-links a.nav-demo { white-space: nowrap; }
+.nav-links a.nav-demo { background: var(--grad); color: #fff; }
+@media (max-width: 960px) { .nav-links:has(.nav-demo) { display: flex; margin-left: auto; } .nav-links li:not(.nav-demo-li) { display: none; } .tour-btn { margin-left: 8px; } }
+#demo { --demo-on: var(--ink); --demo-accent: #a43cff; --demo-r: 18px; }
+.ds-model #m3d, .ds-x3d #x3d { height: 100% !important; min-height: 0; }
+.ds-sim #simBox { display: flex; flex-direction: column; }
+.ds-sim #simBox svg { flex: 1 1 auto; min-height: 0; max-height: none; width: 100%; }
+.ds-vis #vis { position: relative; inset: auto; border-radius: var(--r); background: #101014; height: 100%; }
+.ds-vis #vis > svg#visSvg { width: 100%; height: 100%; max-height: none; cursor: crosshair; }
+.ds-vis #vis .vis-legend { left: 14px; right: auto; top: 14px; }
+.ds-vis #vis .vis-term { left: 14px; right: auto; bottom: 14px; }
+.ds-vis #vis .vis-radar { position: absolute; right: 16px; top: auto; bottom: 16px; width: 130px; height: 130px; pointer-events: none; }
+#demoAside #visCtl button { background: rgba(20,20,25,.05); color: var(--ink); border-color: rgba(20,20,25,.18); }
+#demoAside #visCtl button[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+#demoAside #visCtl .tog[aria-pressed="true"] { background: var(--grad); color: #fff; border-color: transparent; }
+#demoAside #pipe li { padding: 7px 10px; } #demoAside #pipe small { display: none; }
+#demoAside #parts3d button { padding-block: 10px; } #demoAside #parts3d small { font-size: 12.5px; }
+#demoAside #xparts { grid-template-columns: 1fr; }
+#demoAside #xparts button { background: rgba(20,20,25,.05); color: var(--ink); border-color: rgba(20,20,25,.15); }
+#demoAside #xparts button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+#demoAside #xspec { min-height: 0; color: #fff; }
+.ds-lab #labClips { align-content: center; }
+.ds-lab #labClips .clip { max-height: none; }
+@media (max-width: 899px) { .ds-vis #vis .vis-radar { width: 90px; height: 90px; } }
 </style>
 </head>
 <body>
-
 
 <header class="nav" id="nav">
   <div class="nav-in">
@@ -635,6 +697,7 @@ table.cmp { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 
       <li><a href="#evolution" data-grp="testing">Testing</a></li>
       <li><a href="#survey" data-grp="discovery">Discovery</a></li>
       <li><a href="#team" data-grp="team">Team</a></li>
+      <li class="nav-demo-li"><a href="#demo" data-grp="demo" class="nav-demo">Live demo</a></li>
     </ul>
     <button class="tour-btn" id="tourBtn" type="button" aria-pressed="false" title="Show only the pages for a 5-minute overview">5-min tour</button>
   </div>
@@ -754,7 +817,7 @@ table.cmp { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 
         </div>
       </div>
     </div>
-    <div class="sim reveal" style="--d:2">
+    <div class="sim reveal" style="--d:2" id="simBox">
       <svg id="simSvg" viewBox="0 0 520 440" role="img" aria-label="Interactive top-down view: drag the obstacle around the wearer and watch which motor buzzes">
         <circle cx="260" cy="220" r="230" fill="none" stroke="rgba(255,255,255,.10)" stroke-width="1.5"/>
         <circle cx="260" cy="220" r="117" fill="rgba(164,60,255,.10)" stroke="rgba(164,60,255,.55)" stroke-width="1.5" stroke-dasharray="5 6"/>
@@ -795,7 +858,7 @@ table.cmp { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 
       <ul class="pills reveal"><li class="pill">Perception</li><li class="pill">Glasses clip</li></ul>
       <h2 class="reveal" style="--d:1; margin-top:14px;">How the <span class="gt">clip sees.</span></h2>
       <p class="lede reveal" style="--d:2; margin-top:10px;">Drag the chair anywhere in the hall. Switch layers to see each step.</p>
-      <div class="vis-ctl reveal" style="--d:3" role="group" aria-label="Vision layers">
+      <div class="vis-ctl reveal" style="--d:3" role="group" aria-label="Vision layers" id="visCtl">
         <button type="button" data-mode="cam" aria-pressed="false">Camera</button>
         <button type="button" data-mode="depth" aria-pressed="true">Depth</button>
         <button type="button" data-mode="seg" aria-pressed="false">Segmentation</button>
@@ -819,7 +882,7 @@ table.cmp { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 
       <div><ul class="pills reveal"><li class="pill">Real footage</li><li class="pill">Development builds</li></ul><h2 class="reveal" style="--d:1; margin-top:16px;">Straight from <span class="gt">the lab.</span></h2></div>
       <p class="small reveal" style="--d:2; max-width:30em;">The same steps on real camera feeds while we built and tuned the pipeline.</p>
     </div>
-    <div class="clips reveal" style="--d:2">
+    <div class="clips reveal" style="--d:2" id="labClips">
       <figure class="clip"><video class="lazyvid" src="media/vis-depth.mp4" poster="media/vis-depth.jpg" muted loop playsinline preload="none" aria-label="A depth map on a laptop: a person close to the camera shows in blue, the room behind in orange"></video><figcaption><i>1</i><div><b>Depth map</b><span>A person up close reads blue; the room behind reads orange.</span></div></figcaption></figure>
       <figure class="clip"><video class="lazyvid" src="media/vis-detect.mp4" poster="media/vis-detect.jpg" muted loop playsinline preload="none" aria-label="A chair detected with a box and a confidence score, and a red marker on the nearest point with its distance in meters"></video><figcaption><i>2</i><div><b>Detect and measure</b><span>A box on the chair, and its nearest point in meters.</span></div></figcaption></figure>
       <figure class="clip"><video class="lazyvid" src="media/vis-radar2.mp4" poster="media/vis-radar2.jpg" muted loop playsinline preload="none" aria-label="The directional radar view: the front sector lights up and changes color as the obstacle gets closer"></video><figcaption><i>3</i><div><b>Directional radar</b><span>The front sector lights up, and shifts color as it gets closer.</span></div></figcaption></figure>
@@ -1028,6 +1091,20 @@ table.cmp { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 
       </div>
     </div>
     <p class="foot" style="margin:12px 4px 0;">Out of the lab and on the road, from New Orleans to Boston. Hover a photo for where it was. Locus Suit is a prototype in development and is not available for sale.</p>
+  </div>
+</section>
+
+<!-- LIVE DEMO -->
+<section class="s" id="demo" data-name="Live demo" data-grp="demo">
+  <div class="wrap demo-in">
+    <div class="demo-side">
+      <p class="demo-kick">Live demo</p>
+      <h2>Everything <span class="gt">on one page.</span></h2>
+      <div id="demoTabs" role="group" aria-label="Pick a demo"></div>
+      <div id="demoAside"></div>
+      <p id="demoCap"></p>
+    </div>
+    <div class="demo-stage" id="demoStage"></div>
   </div>
 </section>
 
@@ -2022,6 +2099,59 @@ table.cmp { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 
     });
   });
   render();
+})();
+</script>
+<script>
+window.__DEMO = { tabs: [
+  { k: 'model', label: 'The suit in 3D', sub: 'Vest, sensors, glasses clip', core: true, main: ['#m3d'], aside: ['#parts3d'], cap: 'Drag to spin. Hover a part to find it.' },
+  { k: 'x3d', label: 'Take it apart', sub: 'Exploded hardware', main: ['#x3d'], aside: ['#xspec'], cap: 'Slide to explode. Tap a label for specs.' },
+  { k: 'sim', label: 'Felt as touch', sub: 'Haptic simulator', main: ['#simBox'], cap: 'Drag the obstacle around the wearer.' },
+  { k: 'vis', label: 'How the clip sees', sub: 'Depth, segmentation, boxes', main: ['#vis'], aside: ['#visCtl'], cap: 'Drag the chair. Switch layers.' },
+  { k: 'lab', label: 'Lab footage', sub: 'Real pipeline output', main: ['#labClips'], cap: 'Development builds of the vision pipeline.' }
+] };
+// ---------- live demo page: borrows each interactive into one big stage ----------
+(function () {
+  var cfg = window.__DEMO; if (!cfg) return;
+  var sec = document.getElementById('demo'); if (!sec) return;
+  var stage = document.getElementById('demoStage'), aside = document.getElementById('demoAside'), tabsEl = document.getElementById('demoTabs'), cap = document.getElementById('demoCap');
+  var active = null, inView = false, borrowed = [];
+  function q(sel) { return document.querySelector(sel); }
+  function nudge() { requestAnimationFrame(function () { window.dispatchEvent(new Event('resize')); requestAnimationFrame(function () { window.dispatchEvent(new Event('resize')); }); }); }
+  function take(el, into) {
+    if (!el || el.__ph) return;
+    var ph = document.createComment('demo-placeholder'); el.parentNode.insertBefore(ph, el); el.__ph = ph;
+    into.appendChild(el); borrowed.push(el);
+    el.classList.add('in'); [].forEach.call(el.querySelectorAll('.reveal'), function (r) { r.classList.add('in'); });
+    [].forEach.call(el.querySelectorAll('.fill'), function (f) { if (f.dataset.w) f.style.width = f.dataset.w + '%'; });
+  }
+  function giveBack() {
+    borrowed.forEach(function (el) { if (el.__ph && el.__ph.parentNode) { el.__ph.parentNode.insertBefore(el, el.__ph); el.__ph.remove(); } el.__ph = null; });
+    borrowed = []; stage.innerHTML = ''; aside.innerHTML = '';
+  }
+  function load(k) {
+    var t = cfg.tabs.filter(function (x) { return x.k === k; })[0]; if (!t) return;
+    active = k;
+    [].forEach.call(tabsEl.children, function (b) { b.setAttribute('aria-pressed', b.dataset.k === k ? 'true' : 'false'); });
+    cap.textContent = t.cap || '';
+    stage.className = 'demo-stage ds-' + k;
+    if (!inView) return;
+    giveBack();
+    (t.main || []).forEach(function (s) { take(q(s), stage); });
+    (t.aside || []).forEach(function (s) { take(q(s), aside); });
+    nudge();
+  }
+  cfg.tabs.forEach(function (t) {
+    var b = document.createElement('button'); b.type = 'button'; b.dataset.k = t.k; b.setAttribute('aria-pressed', 'false');
+    b.innerHTML = (t.core ? '<i>★</i>' : '<i></i>') + '<span><b>' + t.label + '</b>' + (t.sub ? '<small>' + t.sub + '</small>' : '') + '</span>';
+    b.addEventListener('click', function () { load(t.k); });
+    tabsEl.appendChild(b);
+  });
+  new IntersectionObserver(function (es) {
+    var was = inView; inView = es[0].intersectionRatio > 0.35;
+    if (inView && !was) load(active || cfg.tabs[0].k);
+    if (!inView && was) { giveBack(); nudge(); }
+  }, { threshold: [0, 0.35, 0.6] }).observe(sec);
+  load(cfg.tabs[0].k);
 })();
 </script>
 
