@@ -564,6 +564,63 @@ table.cmp { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 
   #vision .vis-term { display: block; left: 12px; right: 124px; bottom: 16px; font-size: 11px; }
   #vision .vis.full > svg#visSvg { }
 }
+/* refined: solution list */
+.parts3d { gap: 0; margin-top: 22px; border-top: 1px solid var(--line); }
+.parts3d li { border-bottom: 1px solid var(--line); }
+.parts3d button { display: grid; grid-template-columns: 40px 1fr; align-items: start; gap: 12px; background: transparent; border-radius: 0; padding: 16px 6px; }
+.parts3d button i { font-style: normal; font-size: 13px; font-weight: 800; color: var(--mute); padding-top: 2px; font-variant-numeric: tabular-nums; }
+.parts3d button span { display: grid; gap: 3px; }
+.parts3d b { font-size: 17px; }
+.parts3d small { font-size: 14.5px; }
+.parts3d button.on { background: transparent; color: var(--ink); }
+.parts3d button.on i { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.parts3d button.on small { color: var(--ink-2); }
+/* refined: comparison */
+.cmp2 { font-size: 16px; }
+.cmp2 th, .cmp2 td { padding: 16px 12px; border-bottom: 1px solid var(--line); }
+.cmp2 thead th { font-size: 14px; padding-top: 14px; padding-bottom: 14px; color: var(--ink-2); }
+.cmp2 thead th.us { background: var(--ink); color: #fff; border-radius: 16px 16px 0 0; }
+.cmp2 td.us { background: rgba(164,60,255,.07); }
+.cmp2 tbody tr:last-child td.us { border-radius: 0 0 16px 16px; }
+.cmp2 .ck { display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: var(--grad); vertical-align: middle; position: relative; }
+.cmp2 .ck::after { content: ""; position: absolute; left: 7.5px; top: 4px; width: 5px; height: 10px; border: solid #fff; border-width: 0 2.4px 2.4px 0; transform: rotate(45deg); }
+.cmp2 td:not(.us) .ck { background: #b9b9c4; }
+.cmp2 .dash { display: inline-block; width: 12px; height: 2px; border-radius: 2px; background: #d2d2da; vertical-align: middle; }
+@media (max-height: 800px) { .cmp2 th, .cmp2 td { padding: 11px 12px; } }
+/* refined: team labels sit above each head, no dots */
+#team .who i { display: none; }
+#team .who .ft { left: 50% !important; right: auto !important; top: auto !important; bottom: 0 !important; transform: translateX(-50%) !important; }
+#team .tshade { background: linear-gradient(270deg, rgba(238,238,241,.9) 0, rgba(238,238,241,.6) 80px, rgba(238,238,241,0) 150px), linear-gradient(90deg, rgba(238,238,241,.95) 0%, rgba(238,238,241,.75) 20%, rgba(238,238,241,0) 36%); }
+#team .tbox { left: min(0px, calc(var(--cx) - var(--tw) * .47)); }
+@media (max-width: 900px) { #team .tshade { background: linear-gradient(180deg, rgba(238,238,241,.95) 0%, rgba(238,238,241,.7) 18%, rgba(238,238,241,0) 30%); } #team .who.u .ft { bottom: 0 !important; } }
+/* hero: open layout, photo bleeds to the right edge */
+#top { align-items: center; }
+.hero-ph { position: absolute; top: var(--nav-h); right: 0; bottom: 0; width: min(50vw, 760px); margin: 0; }
+.hero-ph img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 15%; mix-blend-mode: multiply; -webkit-mask-image: linear-gradient(0deg, transparent 0%, #000 14%); mask-image: linear-gradient(0deg, transparent 0%, #000 14%); }
+.hero-ph { right: 80px; }
+@media (max-width: 1440px) { .hero-ph { right: 60px; } }
+.hero-in { position: relative; z-index: 2; }
+.hero-in > * { max-width: min(560px, 46vw); }
+.hero-t { font-size: clamp(56px, 8vw, 120px); line-height: .92; letter-spacing: -0.04em; font-weight: 700; margin-top: 22px; }
+.hero-sub { font-size: clamp(18px, 1.7vw, 22px); line-height: 1.4; font-weight: 500; color: var(--ink-2); margin-top: 20px; max-width: 24em; }
+.hero-meta { display: flex; margin-top: 30px; }
+.hero-stat { padding: 0 24px; border-left: 1px solid rgba(20,20,25,.15); }
+.hero-stat:first-child { padding-left: 0; border-left: 0; }
+.hero-stat b { display: block; font-size: clamp(24px, 2.3vw, 32px); font-weight: 700; letter-spacing: -0.02em; }
+.hero-stat span { font-size: 13px; color: var(--mute); }
+.hero-foot { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-top: 32px; }
+.hero-go { display: inline-flex; align-items: center; gap: 10px; background: var(--ink); color: #fff; text-decoration: none; font-weight: 700; font-size: 15px; padding: 13px 22px; border-radius: 999px; transition: transform .2s; }
+.hero-go:hover { transform: translateX(3px); }
+.hero-go span { font-size: 18px; }
+.hero-foot p { margin: 0; font-size: 13.5px; color: var(--mute); max-width: 20em; }
+@media (max-height: 800px) and (min-width: 900px) { .hero-t { font-size: clamp(52px, 6.6vw, 96px); } .hero-meta { margin-top: 20px; } .hero-foot { margin-top: 22px; } .hero-sub { margin-top: 14px; } }
+@media (max-width: 900px) {
+  #top { flex-direction: column; align-items: stretch; padding-top: var(--nav-h); }
+  .hero-ph { position: relative; top: 0; width: 100%; height: 56vh; }
+  .hero-ph img { -webkit-mask-image: linear-gradient(0deg, transparent 0%, #000 25%); mask-image: linear-gradient(0deg, transparent 0%, #000 25%); }
+  .hero-in { margin-top: -40px; padding-bottom: 32px; } .hero-in > * { max-width: none; }
+  .hero-stat { padding: 0 14px; }
+}
 </style>
 </head>
 <body>
@@ -588,20 +645,19 @@ table.cmp { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 
 
 <!-- 01 HERO -->
 <section class="s" id="top" data-core="20" data-name="Intro" data-grp="top">
-  <div class="wrap">
-    <div class="hero">
-      <div class="card grad reveal">
-        <ul class="pills"><li class="pill">dC3i Phase 1</li><li class="pill">WashU</li><li class="pill">Assistive tech</li></ul>
-        <div>
-          <h1>Locus Suit</h1>
-          <p style="font-size:clamp(18px,1.9vw,24px); font-weight:600; line-height:1.35; margin:14px 0 0; max-width:22em;">Restoring independence in every step. A hands-free wearable that turns the space around you into touch.</p>
-        </div>
-      </div>
-      <div class="card white reveal" style="--d:1; padding:0;"><img src="media/worn.webp" alt="A tester wearing the Locus haptic vest and the glasses with the clip-on vision module" width="714" height="894"></div>
-      <div class="card ink reveal" style="--d:2">
-        <div><p class="k" style="margin:0 0 4px;">Built by</p><p style="margin:0; font-weight:700; font-size:16px; line-height:1.4;">Gaurish Agrawal · Sonia Palamand · Jacqueline Chuang</p></div>
-        <a class="arrow" href="#hallway" aria-label="Start">→</a>
-      </div>
+  <figure class="hero-ph reveal" style="--d:1"><img src="media/worn.webp" alt="A tester wearing the Locus haptic vest and the glasses with the clip-on vision module" width="714" height="894"></figure>
+  <div class="wrap hero-in">
+    <ul class="pills reveal"><li class="pill">dC3i Phase 1</li><li class="pill">WashU</li><li class="pill">Assistive tech</li></ul>
+    <h1 class="hero-t reveal" style="--d:1">Locus <span class="gt">Suit</span></h1>
+    <p class="hero-sub reveal" style="--d:2">Restoring independence in every step. A hands-free wearable that turns the space around you into touch.</p>
+    <div class="hero-meta reveal" style="--d:3">
+      <div class="hero-stat"><b>8</b><span>directions sensed</span></div>
+      <div class="hero-stat"><b>4 m</b><span>sensing range</span></div>
+      <div class="hero-stat"><b>17.3 g</b><span>glasses clip</span></div>
+    </div>
+    <div class="hero-foot reveal" style="--d:4">
+      <a class="hero-go" href="#hallway">See how it works <span aria-hidden="true">→</span></a>
+      <p>Built by Gaurish Agrawal, Sonia Palamand and Jacqueline Chuang</p>
     </div>
   </div>
 </section>
@@ -669,15 +725,14 @@ table.cmp { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 
       </div>
     </div>
     <div>
-      <ul class="pills reveal"><li class="pill">The solution</li><li class="pill">2 parts</li></ul>
+      <ul class="pills reveal"><li class="pill">The solution</li></ul>
       <h2 class="reveal" style="--d:1; margin-top:16px;">Hands-free, <span class="gt">all the way around.</span></h2>
-      <p class="lede reveal" style="--d:2">Drag the model to turn it. Hover a part to find it on the wearer.</p>
+      <p class="lede reveal" style="--d:2">A vest and a glasses clip. Drag to turn it.</p>
       <ol class="parts3d reveal" style="--d:3" id="parts3d">
-        <li><button type="button" data-k="vest"><b>Haptic vest</b><small>A zip vest that fits a wide range of body types. The closer the obstacle, the stronger that side buzzes.</small></button></li>
-        <li><button type="button" data-k="sensors"><b>8 depth sensors + motors</b><small>One pair per direction. Senses up to 4 m, warns at 1.5 m, stop cue at 0.5 m.</small></button></li>
-        <li><button type="button" data-k="clip"><b>Head-level hazard clip</b><small>17.3 g, clips onto regular glasses. Catches signs, shelves and cabinets a cane misses, and doesn’t store images.</small></button></li>
+        <li><button type="button" data-k="vest"><i>01</i><span><b>Haptic vest</b><small>Buzzes on the side of the obstacle, stronger as it gets closer.</small></span></button></li>
+        <li><button type="button" data-k="sensors"><i>02</i><span><b>8 depth sensors</b><small>One for each direction, sensing up to 4 m.</small></span></button></li>
+        <li><button type="button" data-k="clip"><i>03</i><span><b>Glasses clip</b><small>Catches head-level hazards a cane misses.</small></span></button></li>
       </ol>
-      <label class="zones-toggle reveal" style="--d:4"><input type="checkbox" id="zonesToggle" checked> Show sensing zones</label>
     </div>
   </div>
 </section>
@@ -890,25 +945,21 @@ table.cmp { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 
   <div class="wrap">
     <div class="head">
       <div><ul class="pills reveal"><li class="pill">Competitive landscape</li></ul><h2 class="reveal" style="--d:1; margin-top:16px;">An added layer, <span class="gt">not a replacement.</span></h2></div>
-      <p class="small reveal" style="--d:2; max-width:30em;">Locus works alongside a cane or guide dog. Battery and maintenance are the honest gaps we’re closing next.</p>
+      <p class="small reveal" style="--d:2; max-width:28em;">Locus works alongside a cane or guide dog. Battery life and upkeep are the gaps we’re closing next: about 4–6 hours today, a full day in Phase 1.</p>
     </div>
     <div class="tbl-wrap reveal" style="--d:2">
-      <table class="cmp">
+      <table class="cmp cmp2">
         <thead><tr><th scope="col"></th><th scope="col" class="us">Locus Suit</th><th scope="col">White cane</th><th scope="col">Guide dog</th><th scope="col">OrCam</th><th scope="col">WeWALK</th></tr></thead>
         <tbody>
-          <tr><td>Hands-free</td><td class="us yes">✓</td><td class="no">–</td><td class="no">–</td><td class="yes">✓</td><td class="no">–</td></tr>
-          <tr><td>360° coverage</td><td class="us yes">✓</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="no">–</td></tr>
-          <tr><td>Head-level hazards</td><td class="us yes">✓</td><td class="no">–</td><td class="no">–</td><td class="yes">✓</td><td class="no">–</td></tr>
-          <tr><td>Indoor use</td><td class="us yes">✓</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="no">–</td></tr>
-          <tr><td>Directional feedback</td><td class="us yes">✓</td><td class="no">–</td><td class="yes">✓</td><td class="no">–</td><td class="yes">✓</td></tr>
-          <tr><td>Object and text recognition</td><td class="us yes">✓</td><td class="no">–</td><td class="no">–</td><td class="yes">✓</td><td class="no">–</td></tr>
-          <tr><td>Discreet to wear</td><td class="us yes">✓</td><td class="no">–</td><td class="no">–</td><td class="yes">✓</td><td class="no">–</td></tr>
-          <tr><td>Low maintenance</td><td class="us no">–</td><td class="yes">✓</td><td class="no">–</td><td class="yes">✓</td><td class="yes">✓</td></tr>
-          <tr><td>All-day battery</td><td class="us no">–</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>Hands-free</td><td class="us yes"><span class=ck aria-label=Yes></span></td><td class="no"><span class=dash aria-label=No></span></td><td class="no"><span class=dash aria-label=No></span></td><td class="yes"><span class=ck aria-label=Yes></span></td><td class="no"><span class=dash aria-label=No></span></td></tr>
+          <tr><td>Sees all the way around</td><td class="us yes"><span class=ck aria-label=Yes></span></td><td class="no"><span class=dash aria-label=No></span></td><td class="no"><span class=dash aria-label=No></span></td><td class="no"><span class=dash aria-label=No></span></td><td class="no"><span class=dash aria-label=No></span></td></tr>
+          <tr><td>Head-level hazards</td><td class="us yes"><span class=ck aria-label=Yes></span></td><td class="no"><span class=dash aria-label=No></span></td><td class="no"><span class=dash aria-label=No></span></td><td class="yes"><span class=ck aria-label=Yes></span></td><td class="no"><span class=dash aria-label=No></span></td></tr>
+          <tr><td>Tells you which direction</td><td class="us yes"><span class=ck aria-label=Yes></span></td><td class="no"><span class=dash aria-label=No></span></td><td class="yes"><span class=ck aria-label=Yes></span></td><td class="no"><span class=dash aria-label=No></span></td><td class="yes"><span class=ck aria-label=Yes></span></td></tr>
+          <tr><td>Low upkeep</td><td class="us no"><span class=dash aria-label=No></span></td><td class="yes"><span class=ck aria-label=Yes></span></td><td class="no"><span class=dash aria-label=No></span></td><td class="yes"><span class=ck aria-label=Yes></span></td><td class="yes"><span class=ck aria-label=Yes></span></td></tr>
+          <tr><td>All-day battery</td><td class="us no"><span class=dash aria-label=No></span></td><td class="yes"><span class=ck aria-label=Yes></span></td><td class="yes"><span class=ck aria-label=Yes></span></td><td class="yes"><span class=ck aria-label=Yes></span></td><td class="yes"><span class=ck aria-label=Yes></span></td></tr>
         </tbody>
       </table>
     </div>
-    <p class="cap reveal" style="--d:3;">The current prototype runs about 4–6 hours; full-day battery is a Phase 1 goal.</p>
   </div>
 </section>
 
@@ -941,12 +992,12 @@ table.cmp { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 
   </div>
   <div class="tshade" aria-hidden="true"></div>
   <div class="tbox tags" role="group" aria-label="The three founders">
-    <button type="button" class="who l" style="left:37.6%; top:28.2%;" aria-expanded="false"><i></i><span class="ft"><b>Gaurish<span class="ln"> Agrawal</span></b><em>CEO · Product</em><small>Mechanical engineering. System response, integration and product.</small></span></button>
-    <button type="button" class="who u" style="left:46.8%; top:29.4%;" aria-expanded="false"><i></i><span class="ft"><b>Sonia<span class="ln"> Palamand</span></b><em>Hardware · UX · Design</em><small>Electrical engineering and AI. Sensing, mapping and market.</small></span></button>
-    <button type="button" class="who r me" style="left:56.7%; top:28.8%;" aria-expanded="false"><i></i><span class="ft"><b>Jacqueline<span class="ln"> Chuang</span></b><em>CTO · Software</em><small>BME and CS. Owns perception, sensor fusion and the machine-learning pipeline.</small></span></button>
+    <button type="button" class="who l" style="left:39.7%; top:24.9%;" aria-expanded="false"><i></i><span class="ft"><b>Gaurish<span class="ln"> Agrawal</span></b><em>CEO · Product</em><small>Mechanical engineering. System response, integration and product.</small></span></button>
+    <button type="button" class="who u" style="left:46.9%; top:27.9%;" aria-expanded="false"><i></i><span class="ft"><b>Sonia<span class="ln"> Palamand</span></b><em>Hardware · UX · Design</em><small>Electrical engineering and AI. Sensing, mapping and market.</small></span></button>
+    <button type="button" class="who r me" style="left:54.6%; top:26.0%;" aria-expanded="false"><i></i><span class="ft"><b>Jacqueline<span class="ln"> Chuang</span></b><em>CTO · Software</em><small>BME and CS. Owns perception, sensor fusion and the machine-learning pipeline.</small></span></button>
   </div>
   <div class="wrap tfront">
-    <div><ul class="pills reveal"><li class="pill">The team</li><li class="pill">WashU</li></ul><h2 class="reveal" style="--d:1; margin-top:16px;">Three founders, <span class="gt">one system.</span></h2><p class="small reveal" style="--d:2; margin-top:10px; color:var(--ink-2);">At the BMES conference. Tap a name for more.</p></div>
+    <div><ul class="pills reveal"><li class="pill">The team</li></ul><h2 class="reveal" style="--d:1; margin-top:16px;">Three founders, <span class="gt">one system.</span></h2></div>
     <details class="trec reveal" style="--d:3">
       <summary>Recognition and advisors</summary>
       <ul class="list" style="margin:10px 0 0;"><li>NIH Biomedical Design Challenge 2025, Honorable Mention</li><li>Skandalaris Venture Competition winner</li><li>VentureWell Pioneer Grant</li><li>Sling Health, National Demo Day</li><li>NIH dC3i program, Phase 1</li><li>Featured by WashU McKelvey Engineering, 2026</li></ul>
@@ -1319,7 +1370,7 @@ table.cmp { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 
 
     // parts list highlights
     var zonesOn = true, zt = document.getElementById('zonesToggle');
-    zt.addEventListener('change', function () { zonesOn = zt.checked; });
+    if (zt) zt.addEventListener('change', function () { zonesOn = zt.checked; });
     var partBtns = [].slice.call(document.querySelectorAll('#parts3d button'));
     function setHighlight(k) {
       highlight = k;
@@ -1351,8 +1402,8 @@ table.cmp { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 
       // sensors pulse in a slow ring; brighter when the sensors row is highlighted
       sensors.forEach(function (s, i) { var p = 0.5 + 0.5 * Math.sin(t * 3 - i * 0.785); s.material.emissiveIntensity = (highlight === 'sensors' ? 1.6 : 0.8) + p * 1.4; });
       cones.visible = zonesOn; clipCone.visible = zonesOn;
-      cones.children.forEach(function (c, i) { var p = 0.5 + 0.5 * Math.sin(t * 3 - i * 0.785); c.material.uniforms.uOpacity.value = (highlight === 'sensors' ? 0.42 : 0.2) + p * 0.18; });
-      clipCone.material.uniforms.uOpacity.value = highlight === 'clip' ? 0.45 : 0.26;
+      cones.children.forEach(function (c, i) { var p = 0.5 + 0.5 * Math.sin(t * 3 - i * 0.785); c.material.uniforms.uOpacity.value = (highlight === 'sensors' ? 0.4 : 0.13) + p * 0.12; });
+      clipCone.material.uniforms.uOpacity.value = highlight === 'clip' ? 0.42 : 0.12;
       camDot.material.emissiveIntensity = 1 + 0.8 * (0.5 + 0.5 * Math.sin(t * 4));
       renderer.render(scene, camera);
       raf = requestAnimationFrame(frameLoop);
