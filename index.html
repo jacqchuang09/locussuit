@@ -681,8 +681,21 @@ table.cmp { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 
 #demoAside #xparts button { background: rgba(20,20,25,.05); color: var(--ink); border-color: rgba(20,20,25,.15); }
 #demoAside #xparts button[aria-pressed="true"] { background: var(--ink); color: #fff; }
 #demoAside #xspec { min-height: 0; color: #fff; }
-.ds-lab #labClips { align-content: center; }
-.ds-lab #labClips .clip { max-height: none; }
+.ds-lab { justify-content: center; gap: 22px; }
+.ds-lab > * { flex: none !important; }
+.ds-lab #labClips { gap: 14px; }
+.ds-lab #labClips .clip { aspect-ratio: auto; max-height: none; background: none; overflow: visible; border-radius: 0; }
+.ds-lab #labClips .clip video { aspect-ratio: 16 / 10; height: auto; border-radius: var(--r); background: #000; display: block; }
+.ds-lab #labClips .clip figcaption { position: static; background: none; backdrop-filter: none; -webkit-backdrop-filter: none; color: var(--ink); padding: 10px 0 0; border-radius: 0; align-items: flex-start; }
+.ds-lab #labClips .clip figcaption span { color: var(--mute); }
+.ds-lab #evoRow { gap: 12px; }
+.ds-lab #evoRow .im { max-height: calc(100svh - var(--nav-h) - 460px); min-height: 120px; border-radius: 18px; }
+.ds-lab #evoRow figcaption { margin-top: 8px; }
+.ds-lab #evoRow figcaption b { font-size: 14px; }
+.ds-lab #evoRow figcaption small { font-size: 12px; color: var(--mute); }
+.ds-lab #evoRow figcaption span { color: var(--mute); }
+@media (max-height: 820px) and (min-width: 900px) { .ds-lab #evoRow figcaption small { display: none; } .ds-lab { gap: 16px; } }
+@media (max-width: 899px) { .demo-stage.ds-lab { height: auto; } .ds-lab #labClips { grid-template-columns: 1fr; } }
 @media (max-width: 899px) { .ds-vis #vis .vis-radar { width: 90px; height: 90px; } }
 </style>
 </head>
@@ -897,7 +910,7 @@ table.cmp { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 
       <div><ul class="pills reveal"><li class="pill">Iterations</li></ul><h2 class="reveal" style="--d:1; margin-top:16px;">From a shoe <span class="gt">to a vest.</span></h2></div>
       <p class="lede reveal" style="--d:2; max-width:26em; margin:0;">Same idea, six bodies. Each round moved the sensors to where the cues were clearer.</p>
     </div>
-    <div class="evo-row reveal" style="--d:2">
+    <div class="evo-row reveal" style="--d:2" id="evoRow">
       <figure class="evo-tile"><div class="im"><img src="media/it-shoe.jpg" alt="Shoe-mounted prototype: sensors and wiring strapped to a sneaker" width="290" height="302" loading="lazy"></div><figcaption><span>01</span><b>Shoe</b><small>Foot movement and floor reflections made readings unreliable.</small></figcaption></figure>
       <figure class="evo-tile"><div class="im"><img src="media/it-back.jpg" alt="Back-mounted prototype: a sensor board and wiring on a tester's back" width="294" height="326" loading="lazy"></div><figcaption><span>02</span><b>Back</b><small>Moved the sensors and motors up to the back.</small></figcaption></figure>
       <figure class="evo-tile"><div class="im"><img src="media/it-belt.jpg" alt="Belt-mounted prototype worn around the waist with wires running around it" width="507" height="576" loading="lazy"></div><figcaption><span>03</span><b>Belt</b><small>Around the waist, where most surveyed users wanted cues.</small></figcaption></figure>
@@ -2107,7 +2120,7 @@ window.__DEMO = { tabs: [
   { k: 'x3d', label: 'Take it apart', sub: 'Exploded hardware', main: ['#x3d'], aside: ['#xspec'], cap: 'Slide to explode. Tap a label for specs.' },
   { k: 'sim', label: 'Felt as touch', sub: 'Haptic simulator', main: ['#simBox'], cap: 'Drag the obstacle around the wearer.' },
   { k: 'vis', label: 'How the clip sees', sub: 'Depth, segmentation, boxes', main: ['#vis'], aside: ['#visCtl'], cap: 'Drag the chair. Switch layers.' },
-  { k: 'lab', label: 'Lab footage', sub: 'Real pipeline output', main: ['#labClips'], cap: 'Development builds of the vision pipeline.' }
+  { k: 'lab', label: 'Lab footage', sub: 'Pipeline output + 6 iterations', main: ['#labClips', '#evoRow'], cap: 'Top: development builds of the vision pipeline. Bottom: six prototypes, shoe to vest.' }
 ] };
 // ---------- live demo page: borrows each interactive into one big stage ----------
 (function () {
