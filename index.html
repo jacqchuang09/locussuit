@@ -1,0 +1,1978 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Locus Suit</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: one full-height page per idea, scroll-snapped, in the Vena "Option C" deck language:
+   cool gray ground, white and ink cards with big rounded corners, pill tags, red-violet-blue gradient. */
+:root {
+  --bg: #eeeef1;
+  --card: #ffffff;
+  --ink: #141419;
+  --ink-2: #2a2a31;
+  --mute: #6a6a75;
+  --line: rgba(20, 20, 25, 0.1);
+  --violet: #a43cff;
+  --red: #ff3d3d;
+  --blue: #2f5bff;
+  --grad: linear-gradient(120deg, #ff3d3d 0%, #a43cff 50%, #2f5bff 100%);
+  --on-ink: #ffffff;
+  --on-ink-mute: #b9b9c4;
+  --r: 32px;
+  --sans: "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  --nav-h: 76px;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (min-width: 900px) and (min-height: 640px) { html { scroll-snap-type: y mandatory; } html.paging { scroll-snap-type: none; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 60; background: var(--bg); }
+img, video { max-width: 100%; height: auto; display: block; }
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--violet); outline-offset: 3px; }
+
+/* ---------- nav ---------- */
+.nav { position: fixed; top: env(safe-area-inset-top, 0px); left: 0; right: 0; height: var(--nav-h); z-index: 50; background: rgba(238, 238, 241, 0.86); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); transition: box-shadow .3s; }
+.nav.scrolled { box-shadow: 0 1px 0 var(--line); }
+.nav-in { height: 100%; max-width: 1240px; margin: 0 auto; display: flex; align-items: center; gap: 28px; padding-left: max(24px, env(safe-area-inset-left, 0px)); padding-right: max(24px, env(safe-area-inset-right, 0px)); }
+.logo { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; font-weight: 800; font-size: 22px; letter-spacing: -0.02em; }
+.logo svg { width: 22px; height: 22px; }
+.nav-links { display: flex; gap: 8px; list-style: none; margin: 0 0 0 auto; padding: 0; }
+.nav-links a { display: block; text-decoration: none; font-size: 14px; font-weight: 600; padding: 7px 14px; border-radius: 999px; border: 1.5px solid transparent; transition: .2s; }
+.nav-links a:hover { border-color: rgba(20,20,25,.25); }
+.nav-links a.on { background: var(--ink); color: #fff; }
+.tour-btn { flex: none; display: inline-flex; align-items: center; gap: 8px; background: var(--card); border: 1.5px solid rgba(20,20,25,.2); padding: 7px 14px; border-radius: 999px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.tour-btn::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--grad); }
+.tour-btn[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+@media (max-width: 960px) { .nav-links { display: none; } .tour-btn { margin-left: auto; } }
+@media (max-width: 899px) { .tour-btn { display: none; } }
+
+/* ---------- rail ---------- */
+.rail { position: fixed; right: max(20px, env(safe-area-inset-right, 0px)); top: 50%; transform: translateY(-50%); z-index: 40; display: flex; flex-direction: column; gap: 10px; list-style: none; margin: 0; padding: 0; pointer-events: none; align-items: flex-end; }
+.rail li { display: flex; justify-content: flex-end; }
+.rail a { position: relative; pointer-events: auto; width: max-content; display: flex; align-items: center; gap: 8px; text-decoration: none; padding: 2px 0 2px 4px; }
+.rail span { position: absolute; right: calc(100% + 6px); top: 50%; margin-top: -12px; pointer-events: none; font-size: 12px; font-weight: 600; background: var(--card); padding: 3px 10px; border-radius: 999px; opacity: 0; transform: translateX(6px); transition: .2s; white-space: nowrap; box-shadow: 0 2px 10px rgba(0,0,0,.1); color: var(--ink); }
+.rail a:hover span, .rail a:focus-visible span { opacity: 1; transform: none; }
+.rail b { font-size: 11px; line-height: 1; font-weight: 700; color: rgba(20,20,25,.45); font-variant-numeric: tabular-nums; min-width: 15px; text-align: right; }
+.rail i { width: 8px; height: 8px; border-radius: 50%; background: rgba(20,20,25,.25); flex: none; transition: .25s; box-shadow: 0 0 0 2px rgba(255,255,255,.7); }
+.rail li.core i { width: 11px; height: 11px; background: var(--card); border: 2.5px solid var(--violet); }
+.rail a.on i { background: var(--violet); transform: scale(1.4); }
+.rail a.on b, .rail a:hover b { color: var(--violet); }
+.rail.dark b { color: rgba(255,255,255,.6); }
+.rail.dark a.on b { color: #d7a6ff; }
+.rail-key { margin-top: 8px; pointer-events: none; display: flex; align-items: center; gap: 6px; font-size: 10.5px; font-weight: 600; color: var(--mute); }
+.rail-key i { width: 10px !important; height: 10px !important; background: transparent !important; border: 2px solid var(--violet); }
+html.tour .rail li:not(.core):not(.rail-key) { display: none; }
+html.tour .rail-key { display: none; }
+@media (max-width: 899px) { .rail { display: none; } }
+@media (max-height: 800px) { .rail { gap: 6px; } }
+@media (max-height: 700px) { .rail { gap: 2px; } }
+@media (min-width: 900px) and (max-width: 1440px) { main .wrap { padding-right: max(72px, env(safe-area-inset-right, 0px)); } }
+
+/* ---------- sections ---------- */
+.s { min-height: 100vh; min-height: 100svh; scroll-snap-align: start; position: relative; display: flex; align-items: center; overflow: hidden; padding-block: calc(var(--nav-h) + 28px) 40px; }
+@media (max-height: 800px) and (min-width: 900px) { .s { padding-block: calc(var(--nav-h) + 12px) 24px; } }
+.s.dark { background: var(--ink); color: var(--on-ink); }
+.wrap { width: 100%; max-width: 1240px; margin: 0 auto; padding-left: max(24px, env(safe-area-inset-left, 0px)); padding-right: max(24px, env(safe-area-inset-right, 0px)); position: relative; }
+.grid { display: grid; gap: 24px; }
+.grid > * { min-width: 0; }
+.g-2 { grid-template-columns: 1fr 1fr; }
+.g-tm { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); align-items: center; gap: 48px; }
+.g-mt { grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); align-items: center; gap: 48px; }
+@media (max-width: 900px) { .g-2, .g-tm, .g-mt { grid-template-columns: minmax(0, 1fr); gap: 24px; } }
+
+.head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin-bottom: 24px; }
+.pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.pill { font-size: 13px; font-weight: 600; border: 1.5px solid rgba(20,20,25,.22); border-radius: 999px; padding: 5px 14px; white-space: nowrap; }
+.s.dark .pill, .card.ink .pill, .card.grad .pill { border-color: rgba(255,255,255,.45); color: #fff; }
+h1, h2, h3 { margin: 0; letter-spacing: -0.03em; text-wrap: balance; }
+h1 { font-size: clamp(40px, 5.2vw, 76px); line-height: 0.98; font-weight: 600; }
+h2 { font-size: clamp(30px, 3.4vw, 48px); line-height: 1.04; font-weight: 600; }
+h3 { font-size: 20px; line-height: 1.25; font-weight: 700; letter-spacing: -0.015em; }
+.gt { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.lede { font-size: 17px; line-height: 1.55; color: var(--ink-2); margin: 16px 0 0; max-width: 36em; }
+.s.dark .lede { color: var(--on-ink-mute); }
+.small { font-size: 14px; line-height: 1.55; color: var(--mute); margin: 0; }
+.k { font-size: 13px; font-weight: 600; color: var(--mute); margin: 0 0 8px; }
+.cap { font-size: 13px; color: var(--mute); margin: 10px 4px 0; }
+
+.card { background: var(--card); border-radius: var(--r); padding: 28px; display: flex; flex-direction: column; min-width: 0; }
+.card.ink { background: var(--ink); color: var(--on-ink); }
+.card.ink .small, .card.ink .k { color: var(--on-ink-mute); }
+.card.grad { background: var(--grad); color: #fff; position: relative; overflow: hidden; }
+.card.grad::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, rgba(255,255,255,.14) 0 26px, rgba(255,255,255,0) 26px 50px); pointer-events: none; }
+.card.grad > * { position: relative; }
+.card.grad .small, .card.grad .k { color: rgba(255,255,255,.9); }
+.card.media { padding: 16px; }
+.card.media img, .card.media video { width: 100%; border-radius: calc(var(--r) - 12px); }
+.stat { font-size: clamp(40px, 4.2vw, 60px); line-height: 1; font-weight: 800; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+.stat-l { font-size: 14px; line-height: 1.4; margin-top: 8px; color: var(--mute); }
+.card.ink .stat-l, .card.grad .stat-l { color: rgba(255,255,255,.85); }
+.cards { display: grid; gap: 16px; }
+.c2 { grid-template-columns: 1fr 1fr; } .c3 { grid-template-columns: repeat(3, 1fr); } .c4 { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 900px) { .c3, .c4 { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .c2, .c3, .c4 { grid-template-columns: 1fr; } }
+.arrow { width: 52px; height: 52px; border-radius: 50%; background: #fff; color: var(--ink); display: grid; place-items: center; font-size: 20px; font-weight: 700; text-decoration: none; flex: none; transition: transform .2s; }
+.arrow:hover { transform: translateX(4px); }
+.list { margin: 10px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.list li { position: relative; padding-left: 18px; font-size: 14.5px; line-height: 1.45; color: var(--ink-2); }
+.list li::before { content: ""; position: absolute; left: 0; top: .55em; width: 7px; height: 7px; border-radius: 50%; background: var(--grad); }
+.card.ink .list li { color: var(--on-ink-mute); }
+
+/* reveal */
+.js .reveal { opacity: 0; transform: translateY(20px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); transition-delay: calc(var(--d, 0) * 90ms); }
+.js .reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .js .reveal { opacity: 1; transform: none; transition: none; } }
+
+/* ---------- hero ---------- */
+.hero { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); grid-template-rows: 1fr auto; gap: 20px; height: min(720px, calc(100svh - var(--nav-h) - 72px)); }
+.hero .card.grad { grid-row: span 2; justify-content: space-between; padding: 40px; }
+.hero .card.white { padding: 12px; display: grid; place-items: center; overflow: hidden; }
+.hero .card.white img { width: 100%; height: 100%; object-fit: contain; }
+.hero .card.ink { flex-direction: row; align-items: flex-end; justify-content: space-between; gap: 16px; }
+@media (max-width: 900px) { .hero { grid-template-columns: 1fr; grid-template-rows: auto; height: auto; } .hero .card.grad { grid-row: auto; min-height: 380px; } }
+
+/* ---------- hallway stepper ---------- */
+.stage { position: relative; border-radius: var(--r); overflow: hidden; background: #fff; aspect-ratio: 1004 / 565; }
+.stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .6s ease; }
+.stage img.on { opacity: 1; }
+.stage .dark { position: absolute; inset: 0; background: #000; opacity: 0; transition: opacity .9s ease; display: grid; place-items: center; text-align: center; padding: 24px; }
+.stage .dark p { color: #d7a6ff; font-size: clamp(18px, 2vw, 26px); font-weight: 500; line-height: 1.4; margin: 0; opacity: 0; transition: opacity .8s ease .6s; }
+.stage.off .dark { opacity: 1; }
+.stage.off .dark p { opacity: 1; }
+.steps { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.steps button { border: 1.5px solid rgba(20,20,25,.22); background: var(--card); border-radius: 999px; padding: 9px 16px; font-size: 14px; font-weight: 600; cursor: pointer; transition: .2s; }
+.steps button[aria-selected="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+.steps .next { background: var(--grad); color: #fff; border: 0; }
+
+/* ---------- tabs ---------- */
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.tabs button { border: 1.5px solid rgba(20,20,25,.22); background: var(--card); border-radius: 999px; padding: 7px 14px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.tabs button[aria-selected="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+.view { display: none; }
+.view.on { display: block; }
+.shot { aspect-ratio: 16 / 10; display: grid; place-items: center; background: #fff; border-radius: var(--r); padding: 14px; overflow: hidden; grid-template: minmax(0, 1fr) / minmax(0, 1fr); }
+.shot img { width: 100%; height: 100%; min-height: 0; object-fit: contain; border-radius: calc(var(--r) - 14px); }
+.view .cap { min-height: 3em; }
+
+/* ---------- haptic sim ---------- */
+.sim { background: var(--ink); color: #fff; border-radius: var(--r); padding: 20px; }
+.sim svg { width: 100%; height: auto; display: block; touch-action: none; cursor: crosshair; }
+.sim-ctl { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.sim-ctl button { border: 1.5px solid rgba(255,255,255,.3); background: transparent; color: #fff; border-radius: 999px; padding: 7px 14px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.sim-ctl button:hover { border-color: #fff; }
+.sim-out { margin: 12px 0 0; font-size: 15px; min-height: 2.6em; color: var(--on-ink-mute); }
+.sim-out b { color: #fff; }
+.motor { transition: r .15s; }
+@keyframes buzz { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.35); } }
+.motor-g.warn .motor, .motor-g.stop .motor { transform-box: fill-box; transform-origin: center; animation: buzz .45s ease-in-out infinite; }
+.motor-g.stop .motor { animation-duration: .18s; }
+@media (prefers-reduced-motion: reduce) { .motor-g .motor { animation: none !important; } }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12.5px; color: var(--on-ink-mute); margin-top: 8px; }
+.legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; background: var(--c); }
+
+/* ---------- survey chart ---------- */
+.chart { background: var(--card); border-radius: var(--r); padding: 24px 26px; }
+.bars { display: grid; gap: 10px; margin-top: 8px; }
+.bar { display: grid; grid-template-columns: 120px 1fr 48px; gap: 12px; align-items: center; font-size: 14px; }
+.bar .tr { height: 16px; background: #f0f0f4; border-radius: 999px; overflow: hidden; }
+.bar .fill { height: 100%; width: 0; border-radius: 999px; background: #c9c9d4; transition: width .8s cubic-bezier(.2,.7,.2,1); }
+.bar.hi .fill { background: var(--grad); }
+.bar .v { font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+.takeaway { margin: 16px 0 0; padding: 12px 16px; border-radius: 16px; background: var(--bg); font-size: 15px; font-weight: 600; }
+@media (max-width: 520px) { .bar { grid-template-columns: 92px 1fr 40px; font-size: 13px; } }
+
+/* ---------- flip cards ---------- */
+.flip { border: 0; padding: 0; background: transparent; cursor: pointer; text-align: left; perspective: 1100px; min-height: 190px; display: block; width: 100%; border-radius: var(--r); }
+.flip-in { position: relative; display: block; width: 100%; height: 100%; min-height: 190px; transform-style: preserve-3d; transition: transform .7s cubic-bezier(.3,.7,.2,1); }
+.flip[aria-pressed="true"] .flip-in { transform: rotateY(180deg); }
+.flip .face { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 8px; padding: 24px; border-radius: var(--r); -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+.flip .front { background: var(--card); color: var(--ink); }
+.flip .back { background: var(--ink); color: #fff; transform: rotateY(180deg); }
+.flip .a, .flip .b { font-size: 17px; font-weight: 600; line-height: 1.35; }
+.flip .tag { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--mute); }
+.flip .back .tag { color: #d7a6ff; }
+.flip .hint { margin-top: auto; font-size: 12.5px; color: var(--mute); }
+.flip .back .hint { color: var(--on-ink-mute); }
+.flip:hover .flip-in { box-shadow: 0 10px 30px rgba(20,20,25,.08); border-radius: var(--r); }
+@media (prefers-reduced-motion: reduce) { .flip-in { transition: none; } }
+
+/* ---------- compare table ---------- */
+.tbl-wrap { background: var(--card); border-radius: var(--r); padding: 10px 14px; overflow-x: auto; }
+table.cmp { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 620px; }
+.cmp th, .cmp td { padding: 8px 10px; text-align: center; border-bottom: 1px solid var(--line); }
+.cmp th:first-child, .cmp td:first-child { text-align: left; font-weight: 600; }
+.cmp thead th { font-size: 13px; color: var(--mute); font-weight: 700; }
+.cmp thead th.us { color: #fff; background: var(--ink); border-radius: 12px 12px 0 0; }
+.cmp td.us { background: rgba(164, 60, 255, .07); }
+.cmp tbody tr:last-child td { border-bottom: 0; }
+.cmp tbody tr:hover td { background: rgba(20,20,25,.03); }
+.cmp tbody tr:hover td.us { background: rgba(164, 60, 255, .12); }
+.yes { color: var(--violet); font-weight: 800; }
+.no { color: #b9b9c4; }
+
+/* ---------- timeline ---------- */
+.tl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.tl .card { gap: 6px; }
+.tl .when { font-size: 13px; font-weight: 700; color: var(--mute); }
+@media (max-width: 900px) { .tl { grid-template-columns: 1fr; } }
+
+/* logos: transparent marks in a loose grid */
+.logos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px 32px; align-items: center; justify-items: center; }
+.logos img { max-height: 84px; max-width: 100%; width: auto; object-fit: contain; }
+.logos img[alt="Biomedical Engineering Society"], .logos img[alt="Society of American Military Engineers"] { max-height: 62px; }
+@media (max-width: 560px) { .logos { grid-template-columns: repeat(3, 1fr); } }
+.foot { font-size: 12.5px; color: var(--mute); }
+
+/* dark pages */
+.s.dark .card { background: #1d1d23; color: #fff; }
+.s.dark .card .small, .s.dark .card .k, .s.dark .card .stat-l, .s.dark .small, .s.dark .cap { color: var(--on-ink-mute); }
+.s.dark .card.ink { background: #2a2a33; }
+.s.dark .card.grad { background: var(--grad); }
+.s.dark .card.grad .stat-l { color: rgba(255,255,255,.9); }
+.s.dark .card .list li { color: var(--on-ink-mute); }
+#touch .sim { background: #1d1d23; }
+#touch .card.media { background: #1d1d23; }
+#touch .card.media p { color: #fff; }
+/* evolution */
+.evo { list-style: none; margin: 22px 0 0; padding: 0; display: grid; gap: 6px; }
+.evo button { width: 100%; display: flex; align-items: center; gap: 14px; text-align: left; background: transparent; border: 1.5px solid rgba(255,255,255,.14); color: #fff; border-radius: 999px; padding: 9px 16px; font-size: 15px; font-weight: 600; cursor: pointer; transition: .2s; }
+.evo button span { font-size: 12px; font-weight: 700; color: var(--on-ink-mute); font-variant-numeric: tabular-nums; }
+.evo button:hover { border-color: rgba(255,255,255,.4); }
+.evo button[aria-pressed="true"] { background: #fff; color: var(--ink); border-color: #fff; }
+.evo button[aria-pressed="true"] span { color: var(--violet); }
+.evo-stage { position: relative; aspect-ratio: 4 / 3; border-radius: var(--r); overflow: hidden; background: #1d1d23; max-height: calc(100svh - var(--nav-h) - 150px); width: 100%; margin: 0 auto; }
+.evo-stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; transform: scale(.98); transition: opacity .5s ease, transform .5s ease; }
+.evo-stage img.on { opacity: 1; transform: none; }
+.evo-cap { margin: 12px 4px 0; font-size: 15px; color: var(--on-ink-mute); min-height: 2.8em; }
+
+/* video link card */
+.vcard { position: relative; display: block; border-radius: var(--r); overflow: hidden; text-decoration: none; aspect-ratio: 16 / 7; max-height: calc(100svh - var(--nav-h) - 220px); width: 100%; background: #000; }
+.vcard img { width: 100%; height: 100%; object-fit: cover; opacity: .55; transition: opacity .3s, transform .6s; }
+.vcard:hover img { opacity: .7; transform: scale(1.02); }
+.vcard .play { position: absolute; left: 50%; top: 50%; width: 92px; height: 92px; margin: -46px 0 0 -46px; border-radius: 50%; background: var(--grad); color: #fff; display: grid; place-items: center; box-shadow: 0 10px 40px rgba(164,60,255,.45); transition: transform .25s; }
+.vcard .play svg { width: 38px; height: 38px; margin-left: 4px; }
+.vcard:hover .play { transform: scale(1.08); }
+.vcard .vlabel { position: absolute; left: 24px; bottom: 20px; color: #fff; font-weight: 700; font-size: 18px; }
+
+/* photo bento */
+.bento { display: grid; grid-template-columns: 1.25fr 1fr 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 14px; height: min(600px, calc(100svh - var(--nav-h) - 200px)); }
+.bento figure { margin: 0; position: relative; border-radius: var(--r); overflow: hidden; background: #ddd; min-height: 0; }
+.bento .b-big { grid-row: span 2; }
+.bento img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+.bento figure:hover img { transform: scale(1.04); }
+.bento figcaption { position: absolute; left: 12px; bottom: 12px; max-width: calc(100% - 24px); display: flex; flex-direction: column; background: rgba(20,20,25,.72); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #fff; border-radius: 999px; padding: 7px 14px; transition: border-radius .3s, padding .3s; }
+.bento figcaption b { font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bento figcaption span { font-size: 12.5px; color: var(--on-ink-mute); max-height: 0; overflow: hidden; opacity: 0; transition: max-height .3s, opacity .3s; }
+.bento figure:hover figcaption, .bento figure:focus-within figcaption { border-radius: 16px; padding: 9px 14px; }
+.bento figure:hover figcaption span, .bento figure:focus-within figcaption span { max-height: 3em; opacity: 1; }
+@media (max-width: 900px) { .bento { grid-template-columns: 1fr 1fr; grid-template-rows: none; height: auto; } .bento figure, .bento .b-big, .bento figure:nth-child(n) { grid-column: auto; grid-row: auto; aspect-ratio: 4 / 3; display: block; } .bento .b-big { grid-column: span 2; } }
+/* ---------- 3D model ---------- */
+.m3d { position: relative; background: radial-gradient(120% 90% at 50% 35%, #ffffff 0%, #f4f4f7 60%, #e6e6ec 100%); border-radius: var(--r); overflow: hidden; height: min(620px, calc(100svh - var(--nav-h) - 90px)); min-height: 380px; }
+.m3d canvas { width: 100%; height: 100%; display: block; cursor: grab; touch-action: pan-y; }
+.m3d canvas.drag { cursor: grabbing; }
+.m3d-fallback { width: 100%; height: 100%; object-fit: contain; }
+.m3d-hint { position: absolute; left: 18px; top: 18px; font-size: 12.5px; font-weight: 600; color: var(--mute); background: rgba(255,255,255,.8); padding: 5px 12px; border-radius: 999px; pointer-events: none; transition: opacity .6s; }
+.m3d-hint.gone { opacity: 0; }
+.m3d-views { position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%); display: flex; gap: 6px; background: rgba(255,255,255,.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); padding: 5px; border-radius: 999px; box-shadow: 0 4px 18px rgba(20,20,25,.08); }
+.m3d-views button { border: 0; background: transparent; border-radius: 999px; padding: 7px 14px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--ink-2); }
+.m3d-views button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+.parts3d { list-style: none; margin: 20px 0 0; padding: 0; display: grid; gap: 10px; }
+.parts3d button { width: 100%; text-align: left; border: 0; background: var(--card); border-radius: 22px; padding: 14px 18px; cursor: pointer; display: grid; gap: 2px; transition: background .2s, color .2s; }
+.parts3d b { font-size: 15.5px; }
+.parts3d small { font-size: 13.5px; color: var(--mute); }
+.parts3d button.on { background: var(--ink); color: #fff; }
+.parts3d button.on small { color: var(--on-ink-mute); }
+.zones-toggle { display: inline-flex; align-items: center; gap: 10px; margin-top: 16px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.zones-toggle input { width: 18px; height: 18px; accent-color: var(--violet); }
+
+.sim svg { max-height: calc(100svh - var(--nav-h) - 250px); }
+#showcase .photo { max-height: calc(100svh - var(--nav-h) - 420px); min-height: 180px; object-fit: cover; }
+@media (max-height: 800px) { .cmp th, .cmp td { padding: 6px 10px; } .head { margin-bottom: 16px; } }
+/* ---------- exploded vest ---------- */
+.x3d { position: relative; border-radius: var(--r); overflow: hidden; height: min(640px, calc(100svh - var(--nav-h) - 80px)); min-height: 400px; background: radial-gradient(110% 85% at 50% 40%, #2a2a36 0%, #17171d 62%, #101014 100%); }
+.x3d canvas { width: 100%; height: 100%; display: block; cursor: grab; touch-action: pan-y; }
+.x3d canvas.drag { cursor: grabbing; }
+.x3d::after { content: ""; position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 32px 32px; mask-image: radial-gradient(80% 70% at 50% 50%, #000 30%, transparent 100%); -webkit-mask-image: radial-gradient(80% 70% at 50% 50%, #000 30%, transparent 100%); }
+.x3d-fallback { width: 100%; height: 100%; object-fit: cover; }
+.x3d-tags { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+.x3d-tag { position: absolute; left: 0; top: 0; pointer-events: auto; display: inline-flex; align-items: center; gap: 6px; border: 0; cursor: pointer; background: rgba(20,20,25,.78); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); color: #fff; font-size: 12px; font-weight: 600; padding: 4px 10px 4px 4px; border-radius: 999px; white-space: nowrap; box-shadow: 0 0 0 1px rgba(255,255,255,.14); transition: opacity .3s, background .2s; will-change: transform; }
+.x3d-tag i { font-style: normal; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: 10.5px; font-weight: 800; background: rgba(255,255,255,.14); font-variant-numeric: tabular-nums; }
+.x3d-tag.on { background: #fff; color: var(--ink); }
+.x3d-tag.on i { background: var(--grad); color: #fff; }
+.x3d-tag[hidden] { display: none; }
+.x3d-bar { position: absolute; left: 16px; right: 16px; bottom: 14px; z-index: 3; display: flex; align-items: center; gap: 12px; background: rgba(20,20,25,.72); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 999px; padding: 6px 16px 6px 6px; box-shadow: 0 0 0 1px rgba(255,255,255,.1); }
+.x3d-bar button { border: 0; background: #fff; color: var(--ink); border-radius: 999px; padding: 7px 14px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.x3d-bar label { font-size: 12px; font-weight: 600; color: var(--on-ink-mute); white-space: nowrap; }
+.x3d-bar input[type=range] { flex: 1; min-width: 60px; accent-color: var(--violet); }
+.x3d-hint { position: absolute; left: 18px; top: 16px; z-index: 3; font-size: 12px; font-weight: 600; color: var(--on-ink-mute); pointer-events: none; transition: opacity .6s; }
+.x3d-hint.gone { opacity: 0; }
+.x3d-scale { position: absolute; right: 18px; top: 16px; z-index: 3; font-size: 11.5px; color: rgba(255,255,255,.45); pointer-events: none; }
+.xparts { list-style: none; margin: 18px 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.xparts button { width: 100%; display: flex; align-items: center; gap: 10px; text-align: left; background: transparent; border: 1.5px solid rgba(255,255,255,.14); color: #fff; border-radius: 999px; padding: 6px 12px 6px 6px; font-size: 13.5px; font-weight: 600; cursor: pointer; transition: .2s; }
+.xparts button i { font-style: normal; flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 800; background: rgba(255,255,255,.1); font-variant-numeric: tabular-nums; }
+.xparts button:hover { border-color: rgba(255,255,255,.4); }
+.xparts button[aria-pressed="true"] { background: #fff; color: var(--ink); border-color: #fff; }
+.xparts button[aria-pressed="true"] i { background: var(--grad); color: #fff; }
+.xspec { margin-top: 14px; background: #1d1d23; border-radius: 24px; padding: 18px 20px; min-height: 176px; }
+.xspec h3 { font-size: 18px; }
+.xspec .sub { font-size: 13.5px; color: var(--on-ink-mute); margin: 4px 0 10px; }
+.xspec dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; font-size: 13.5px; }
+.xspec dt { color: #d7a6ff; font-weight: 600; white-space: nowrap; }
+.xspec dd { margin: 0; color: #fff; }
+@media (max-height: 800px) and (min-width: 900px) { .xspec { min-height: 150px; padding: 14px 18px; } .xparts { margin-top: 12px; } .xparts button { padding-block: 4px; } }
+
+/* ---------- vision demo ---------- */
+.vis { position: relative; background: #101014; border-radius: var(--r); overflow: hidden; }
+.vis svg { width: 100%; height: auto; display: block; touch-action: none; max-height: calc(100svh - var(--nav-h) - 170px); }
+.vis svg .chair-hit { cursor: grab; }
+.vis svg.drag .chair-hit { cursor: grabbing; }
+.vis-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 12px; }
+.vis-ctl button { border: 1.5px solid rgba(20,20,25,.22); background: var(--card); border-radius: 999px; padding: 7px 14px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.vis-ctl button[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+.vis-ctl .sep { width: 1px; height: 22px; background: var(--line); margin: 0 4px; }
+.vis-ctl .tog[aria-pressed="true"] { background: var(--grad); border-color: transparent; }
+.vis-term { position: absolute; left: 14px; bottom: 14px; font: 600 12px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: #c8f7c5; background: rgba(10,10,14,.8); padding: 6px 12px; border-radius: 12px; pointer-events: none; max-width: calc(100% - 200px); }
+.vis-term span { color: #9a9aa8; }
+.vis-legend { position: absolute; left: 14px; top: 14px; display: flex; flex-wrap: wrap; gap: 4px; max-width: 60%; pointer-events: none; }
+.vis-legend span { font-size: 11.5px; font-weight: 600; color: #fff; background: rgba(10,10,14,.72); border-radius: 999px; padding: 3px 9px 3px 7px; }
+.vis-legend span::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; background: var(--c); }
+.pipe { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 8px; counter-reset: p; }
+.pipe li { counter-increment: p; display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: start; background: var(--card); border-radius: 20px; padding: 12px 16px 12px 12px; }
+.pipe li::before { content: counter(p); width: 30px; height: 30px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; font-size: 13px; font-weight: 800; }
+.pipe li.hot::before { background: var(--grad); }
+.pipe b { display: block; font-size: 15px; }
+.pipe small { display: block; font-size: 13.5px; line-height: 1.45; color: var(--mute); margin-top: 2px; }
+@media (max-height: 800px) and (min-width: 900px) { .pipe li { padding-block: 9px; } .pipe small { font-size: 13px; } }
+
+/* ---------- lab clips ---------- */
+.clips { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.clip { margin: 0; position: relative; border-radius: var(--r); overflow: hidden; background: #000; aspect-ratio: 1 / 1; max-height: calc(100svh - var(--nav-h) - 250px); width: 100%; justify-self: center; }
+.clip video, .clip img { width: 100%; height: 100%; object-fit: cover; }
+.clip figcaption { position: absolute; left: 12px; right: 12px; bottom: 12px; display: flex; gap: 10px; align-items: center; background: rgba(20,20,25,.72); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 18px; padding: 8px 14px 8px 8px; color: #fff; }
+.clip figcaption i { font-style: normal; flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--grad); display: grid; place-items: center; font-size: 12px; font-weight: 800; }
+.clip figcaption b { display: block; font-size: 14px; line-height: 1.25; }
+.clip figcaption span { display: block; font-size: 12.5px; line-height: 1.35; color: var(--on-ink-mute); }
+@media (max-width: 900px) { .clips { grid-template-columns: 1fr; } .clip { max-height: none; } }
+
+/* ---------- team photo ---------- */
+.team-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 16px; align-items: stretch; }
+.team-photo { margin: 0; position: relative; border-radius: var(--r); overflow: hidden; min-height: 0; }
+.team-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; }
+@media (max-height: 800px) and (min-width: 900px) { #team .head { margin-bottom: 14px; } .team-cards .card { padding-block: 12px; } .team-cards .card.fnd { padding-block: 10px; } }
+.team-photo figcaption { position: absolute; left: 12px; bottom: 12px; background: rgba(20,20,25,.72); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #fff; border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 600; }
+.team-cards { display: grid; gap: 12px; }
+.team-cards .card { padding: 18px 22px; }
+@media (max-width: 900px) { .team-grid { grid-template-columns: 1fr; } .team-photo { aspect-ratio: 4 / 3; } }
+
+/* images fill their frames: no inner padding or letterbox edges */
+.shot { aspect-ratio: auto; display: flex; justify-content: center; align-items: center; background: transparent; padding: 0; border-radius: 0; overflow: visible; }
+.shot img { width: auto; height: auto; max-width: 100%; max-height: calc(100svh - var(--nav-h) - 230px); object-fit: cover; border-radius: var(--r); }
+.evo-stage { background: transparent; }
+.evo-stage img { inset: 0; margin: auto; width: auto; height: auto; max-width: 100%; max-height: 100%; object-fit: cover; border-radius: var(--r); }
+.card.media.bleed { padding: 0; overflow: hidden; }
+.card.media.bleed > img { border-radius: 0; }
+.card.media.bleed .txt { padding: 16px 22px 20px; }
+.photo { display: block; width: 100%; border-radius: var(--r); object-fit: cover; }
+.team-cards { gap: 10px; align-content: start; }
+.team-cards .card.fnd { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 16px; align-items: center; padding: 14px 22px; }
+.team-cards .card.fnd .k { margin: 0 0 2px; }
+.team-cards .card.fnd h3 { font-size: 18px; }
+.list.rec { grid-template-columns: 1fr 1fr; column-gap: 20px; }
+.list.rec li { font-size: 13.5px; }
+@media (max-width: 900px) { .list.rec { grid-template-columns: 1fr; } }
+@media (min-width: 901px) and (max-width: 1150px) { .team-grid { grid-template-columns: minmax(0, .72fr) minmax(0, 1.28fr); } .list.rec li { font-size: 13px; } }
+@media (max-width: 560px) { .team-cards .card.fnd { grid-template-columns: 1fr; gap: 4px; } }
+@media (max-width: 900px) { .x3d { height: 440px; min-height: 0; } }
+@media (max-width: 600px) { .x3d-tags, .x3d-scale, .vis-term { display: none; } .x3d-bar label:first-of-type { display: none; } .vis-legend span { font-size: 10.5px; padding: 2px 7px 2px 5px; } }
+.evo-row { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; }
+.evo-tile { margin: 0; }
+.evo-tile .im { aspect-ratio: 3 / 4; max-height: calc(100svh - var(--nav-h) - 380px); width: 100%; border-radius: 24px; overflow: hidden; background: #1d1d23; }
+.evo-tile img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+.evo-tile:hover img { transform: scale(1.05); }
+.evo-tile figcaption { margin-top: 12px; display: grid; gap: 2px; }
+.evo-tile figcaption span { font-size: 12px; font-weight: 700; color: var(--on-ink-mute); font-variant-numeric: tabular-nums; }
+.evo-tile figcaption b { font-size: 16px; }
+.evo-tile figcaption small { font-size: 13px; line-height: 1.4; color: var(--on-ink-mute); }
+.evo-tile.now .im { box-shadow: 0 0 0 3px #a43cff; }
+.evo-tile.now figcaption span { color: #d7a6ff; }
+@media (max-width: 899px) { .evo-row { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .evo-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } .evo-tile .im { aspect-ratio: 1 / 1; } }
+.qgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.qcard { background: var(--card); border-radius: 24px; padding: 16px 18px; display: flex; flex-direction: column; }
+.qcard .qt { margin: 0; font-size: 14.5px; font-weight: 700; line-height: 1.3; }
+.qcard .qs { margin: 2px 0 8px; font-size: 12px; color: var(--mute); }
+.qcard .bars { gap: 5px; margin-top: 0; }
+.qcard .bar { grid-template-columns: 92px 1fr 34px; gap: 8px; font-size: 12.5px; line-height: 1.2; }
+.qcard .bar .tr { height: 10px; }
+.qcard .qtake { margin: auto 0 0; padding-top: 10px; font-size: 13px; font-weight: 600; }
+.qcard .qtake::before { content: "→ "; color: var(--violet); }
+@media (max-height: 800px) and (min-width: 900px) { .qcard { padding: 12px 16px; } .qcard .bars { gap: 3px; } .qcard .bar .tr { height: 8px; } .qcard .qtake { padding-top: 6px; } }
+@media (max-width: 1000px) { .qgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .qgrid { grid-template-columns: 1fr; } }
+.nexthead { display: flex; align-items: baseline; gap: 14px; margin: 26px 0 12px; }
+.nexthead h3 { font-size: clamp(22px, 2.2vw, 30px); font-weight: 600; }
+.mstats .card { padding: 22px 24px; }
+.mstats .stat { font-size: clamp(34px, 3.4vw, 50px); }
+.tl-tight .card { padding: 20px 24px; }
+.tl-tight .list { margin-top: 6px; gap: 4px; }
+.tl-tight .list li { font-size: 13.5px; }
+.s.dark .tl .when { color: var(--on-ink-mute); }
+@media (max-height: 800px) and (min-width: 900px) { #market .head { margin-bottom: 14px; } .nexthead { margin: 16px 0 8px; } .mstats .card, .tl-tight .card { padding: 16px 20px; } .mstats .stat { font-size: clamp(30px, 3vw, 42px); } }
+.talk { display: grid; grid-template-columns: repeat(3, minmax(0, .62fr)) minmax(0, 2fr); gap: 14px; margin-top: 14px; }
+.talk .card { padding: 18px 20px; }
+.talk .stat { font-size: clamp(34px, 3.2vw, 48px); }
+.talk .stat-l { font-size: 13px; }
+.logos.sm { grid-template-columns: repeat(5, 1fr); gap: 12px 18px; }
+.logos.sm img { max-height: 40px; }
+.logos.sm img[alt="Biomedical Engineering Society"], .logos.sm img[alt="Society of American Military Engineers"] { max-height: 30px; }
+@media (max-width: 1000px) { .talk { grid-template-columns: repeat(3, minmax(0, 1fr)); } .talk-logos { grid-column: 1 / -1; } }
+@media (max-width: 560px) { .talk { grid-template-columns: 1fr; } .logos.sm { grid-template-columns: repeat(4, 1fr); } }
+@media (max-height: 800px) and (min-width: 900px) { .talk .card { padding: 14px 18px; } .logos.sm img { max-height: 32px; } }
+.toolrow .card.media .txt { padding: 14px 20px 18px; }
+.s.dark .toolrow .card.media { background: #1d1d23; }
+.s.dark .toolrow .card.ink { background: #2a2a33; }
+.toolrow .card.ink h3 { font-size: 22px !important; }
+#problem .mstats .card { padding: 18px 22px; }
+.c4clips { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.clip.yt { display: block; text-decoration: none; color: #fff; }
+.clip.yt img { opacity: .6; transition: opacity .3s, transform .6s; }
+.clip.yt:hover img { opacity: .75; transform: scale(1.03); }
+.clip.yt .play { position: absolute; left: 50%; top: 42%; width: 76px; height: 76px; margin: -38px 0 0 -38px; border-radius: 50%; background: var(--grad); display: grid; place-items: center; box-shadow: 0 10px 40px rgba(164,60,255,.45); transition: transform .25s; }
+.clip.yt .play svg { width: 32px; height: 32px; margin-left: 4px; }
+.clip.yt:hover .play { transform: scale(1.08); }
+.clip.yt .cap2 { position: absolute; left: 12px; right: 12px; bottom: 12px; display: flex; gap: 10px; align-items: center; background: rgba(20,20,25,.72); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 18px; padding: 8px 14px 8px 8px; }
+.clip.yt .cap2 i { font-style: normal; flex: none; width: 28px; height: 28px; border-radius: 50%; background: #fff; color: var(--ink); display: grid; place-items: center; font-size: 11px; }
+.clip.yt .cap2 b { display: block; font-size: 14px; line-height: 1.25; }
+.clip.yt .cap2 span span { display: block; font-size: 12.5px; color: var(--on-ink-mute); }
+.c4clips .clip { max-height: none; }
+@media (max-width: 1000px) { .c4clips { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .c4clips { grid-template-columns: 1fr; } }
+.endgrid { display: grid; grid-template-rows: minmax(0, 1fr); grid-template-columns: minmax(0, .8fr) minmax(0, 1.7fr); gap: 16px; height: min(640px, calc(100svh - var(--nav-h) - 110px)); }
+.endl { display: grid; grid-template-rows: 1fr auto; gap: 16px; min-height: 0; }
+.endl .card.grad { padding: 32px; }
+.endl h1 { font-size: clamp(40px, 4.4vw, 64px); }
+.endgrid .bento { height: 100%; grid-template-columns: 1.2fr 1fr 1fr; grid-template-rows: repeat(3, minmax(0, 1fr)); }
+.endgrid .bento .b-big { grid-row: span 3; }
+@media (max-width: 900px) { .endgrid { grid-template-columns: 1fr; height: auto; } .endl .card.grad { min-height: 300px; } .endgrid .bento { height: auto; } }
+#learned .flip .front { background: #fff; }
+#learned .flip .back { background: var(--grad); }
+#learned .flip .back .tag, #learned .flip .back .hint { color: rgba(255,255,255,.85); }
+.watch { position: relative; display: block; border-radius: var(--r); overflow: hidden; color: #fff; text-decoration: none; }
+.watch .photo { transition: transform .6s cubic-bezier(.2,.7,.2,1), filter .3s; }
+.watch:hover .photo { transform: scale(1.02); filter: brightness(.85); }
+.wplay { position: absolute; left: 16px; bottom: 16px; display: grid; grid-template-columns: auto auto; grid-template-rows: auto auto; column-gap: 12px; align-items: center; background: rgba(20,20,25,.74); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 999px; padding: 7px 22px 7px 7px; }
+.wplay .play { grid-row: span 2; width: 46px; height: 46px; border-radius: 50%; background: var(--grad); display: grid; place-items: center; box-shadow: 0 6px 24px rgba(164,60,255,.45); transition: transform .25s; }
+.wplay .play svg { width: 20px; height: 20px; margin-left: 3px; }
+.watch:hover .wplay .play { transform: scale(1.08); }
+.wplay b { font-size: 15px; line-height: 1.2; }
+.wplay small { font-size: 12.5px; color: var(--on-ink-mute); line-height: 1.2; }
+.s:not(.dark) .evo-tile .im { background: #dcdce2; }
+.s:not(.dark) .evo-tile figcaption span, .s:not(.dark) .evo-tile figcaption small { color: var(--mute); }
+.s:not(.dark) .evo-tile.now figcaption span { color: var(--violet); }
+.nexthead.big { margin: 30px 0 16px; }
+.nexthead.big h2 { font-size: clamp(30px, 3.4vw, 48px); }
+@media (max-height: 800px) and (min-width: 900px) { .nexthead.big { margin: 18px 0 12px; } }
+/* team: the BMES photo fills the page, with labels on each founder */
+#team { --tw: max(118vw, 160svh); --cx: 61%; --cy: 55%; align-items: stretch; }
+#team .tbg { position: absolute; inset: 0; overflow: hidden; }
+#team .tbox { position: absolute; width: var(--tw); height: calc(var(--tw) * 1049 / 1400); left: calc(var(--cx) - var(--tw) * .47); top: calc(var(--cy) - var(--tw) * 1049 / 1400 * .43); }
+#team .tbox img { width: 100%; height: 100%; display: block; }
+#team .tshade { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(238,238,241,.92) 0%, rgba(238,238,241,.6) 22%, rgba(238,238,241,0) 40%); }
+#team .tags { z-index: 3; pointer-events: none; }
+#team .tfront { position: relative; z-index: 4; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; }
+#team .tfront > * { pointer-events: auto; max-width: 380px; }
+.who { position: absolute; pointer-events: auto; border: 0; background: none; padding: 0; cursor: pointer; transform: translate(-50%, -50%); width: 0; height: 0; }
+.who i { position: absolute; left: -9px; top: -9px; width: 18px; height: 18px; border-radius: 50%; border: 2.5px solid #fff; background: rgba(164,60,255,.55); box-shadow: 0 0 0 0 rgba(164,60,255,.6); animation: ping 2.4s ease-out infinite; }
+@keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(164,60,255,.55); } 70%, 100% { box-shadow: 0 0 0 14px rgba(164,60,255,0); } }
+@media (prefers-reduced-motion: reduce) { .who i { animation: none; } }
+.who .ft { position: absolute; display: grid; gap: 1px; text-align: left; background: rgba(20,20,25,.84); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #fff; border-radius: 999px; padding: 7px 14px; width: max-content; max-width: 250px; transition: border-radius .25s, padding .25s; box-shadow: 0 6px 24px rgba(0,0,0,.18); }
+.who .ft b { font-size: 14px; white-space: nowrap; }
+.who .ft em, .who .ft small { font-style: normal; display: none; width: 210px; }
+@keyframes ftin { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: none; } }
+.who .ft em { font-size: 12px; font-weight: 700; color: #d7a6ff; }
+.who .ft small { font-size: 12.5px; line-height: 1.4; color: var(--on-ink-mute); }
+.who.me .ft { background: var(--grad); }
+.who.me .ft em, .who.me .ft small { color: rgba(255,255,255,.92); }
+.who:hover .ft, .who:focus-visible .ft, .who[aria-expanded="true"] .ft { border-radius: 18px; padding: 10px 14px; }
+.who:hover .ft em, .who:focus-visible .ft em, .who[aria-expanded="true"] .ft em, .who:hover .ft small, .who:focus-visible .ft small, .who[aria-expanded="true"] .ft small { display: block; animation: ftin .3s ease both; }
+.who:hover, .who:focus-visible, .who[aria-expanded="true"] { z-index: 2; }
+.who.l .ft { right: 22px; top: -16px; }
+.who.r .ft { left: 22px; top: -16px; }
+.who.u .ft { left: -60px; bottom: 26px; }
+.trec { background: rgba(255,255,255,.9); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 22px; padding: 12px 18px; }
+.trec summary { cursor: pointer; font-size: 14px; font-weight: 700; list-style: none; display: flex; align-items: center; gap: 8px; }
+.trec summary::-webkit-details-marker { display: none; }
+.trec summary::after { content: "+"; margin-left: auto; font-size: 18px; color: var(--violet); }
+.trec[open] summary::after { content: "–"; }
+.trec .list li { font-size: 13px; }
+@media (max-width: 900px) { #team { --tw: max(300vw, 110svh); --cx: 50%; --cy: 60%; min-height: max(100svh, 700px); } #team .tshade { background: linear-gradient(180deg, rgba(238,238,241,.95) 0%, rgba(238,238,241,.7) 22%, rgba(238,238,241,0) 36%); } .who .ft { padding: 5px 11px; } .who .ft b { font-size: 12.5px; } .who .ft em, .who .ft small { width: 160px; } .who .ln { display: none; } .who.l .ft, .who.r .ft { right: auto; left: 50%; top: auto; bottom: 18px; transform: translateX(-50%); } .who.u .ft { left: 50%; transform: translateX(-50%); bottom: auto; top: 70px; } .who.r .ft { left: auto; right: -24px; transform: none; } .who.l .ft { left: -24px; transform: none; } .who[aria-expanded="true"] .ln { display: inline; } }
+.say { display: grid; grid-template-columns: minmax(110px, 34%) 1fr; margin-top: 18px; background: #1d1d23; border-radius: 24px; overflow: hidden; }
+.say img { width: 100%; height: 100%; object-fit: cover; min-height: 150px; }
+.say-txt { padding: 16px 18px 16px; display: flex; flex-direction: column; gap: 6px; }
+.say-k { margin: 0; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: #d7a6ff; }
+.wave { display: inline-flex; align-items: center; gap: 2px; height: 14px; }
+.wave i { width: 3px; height: 40%; border-radius: 2px; background: var(--grad); }
+.say.talk .wave i { animation: wv .8s ease-in-out infinite; }
+.say .wave i:nth-child(2) { animation-delay: .1s; height: 70%; } .say .wave i:nth-child(3) { animation-delay: .2s; height: 100%; } .say .wave i:nth-child(4) { animation-delay: .3s; height: 60%; } .say .wave i:nth-child(5) { animation-delay: .4s; }
+@keyframes wv { 0%, 100% { transform: scaleY(.4); } 50% { transform: scaleY(1); } }
+.say-q { margin: 0; font-size: 18px; font-weight: 700; line-height: 1.3; letter-spacing: -.01em; }
+.say-q .w { opacity: .28; transition: opacity .2s; } .say-q .w.on { opacity: 1; }
+.say-s { margin: 0; font-size: 13.5px; line-height: 1.45; color: var(--on-ink-mute); }
+.say-btn { align-self: flex-start; margin-top: 4px; display: inline-flex; align-items: center; gap: 6px; border: 0; cursor: pointer; background: #fff; color: var(--ink); border-radius: 999px; padding: 6px 14px 6px 10px; font-size: 13px; font-weight: 700; }
+.say-btn svg { width: 14px; height: 14px; }
+@media (max-height: 800px) and (min-width: 900px) { .say-q { font-size: 16px; } .say img { min-height: 120px; } .say-txt { padding: 12px 16px; } }
+@media (max-height: 800px) and (min-width: 900px) { #problem .toolrow img { aspect-ratio: 16 / 6 !important; } #problem .toolrow .card.media .txt { padding: 10px 18px 12px; } #problem .nexthead { margin: 16px 0 10px; } }
+@media (max-width: 900px) { .endgrid .bento { grid-template-columns: 1fr 1fr; grid-template-rows: none; } .endgrid .bento .b-big { grid-row: auto; grid-column: span 2; } }
+/* full-screen vision demo */
+#vision { background: #101014; color: #fff; align-items: stretch; }
+#vision .vis.full { position: absolute; inset: var(--nav-h) 0 0 0; border-radius: 0; background: #101014; }
+#vision .vis.full > svg#visSvg { width: 100%; height: 100%; max-height: none; cursor: crosshair; touch-action: pan-y; }
+#vision .vshade { position: absolute; inset: var(--nav-h) 0 0 0; pointer-events: none; background: linear-gradient(90deg, rgba(12,12,16,.9) 0%, rgba(12,12,16,.72) 26%, rgba(12,12,16,0) 46%); }
+#vision .vfront { position: relative; z-index: 3; pointer-events: none; display: flex; align-items: center; }
+#vision .vpanel { pointer-events: auto; max-width: 390px; }
+#vision .pill { border-color: rgba(255,255,255,.45); color: #fff; }
+#vision .lede { color: var(--on-ink-mute); font-size: 16px; }
+#vision .vis-ctl { margin: 16px 0 0; }
+#vision .vis-ctl button { background: rgba(255,255,255,.08); color: #fff; border-color: rgba(255,255,255,.22); }
+#vision .vis-ctl button[aria-pressed="true"] { background: #fff; color: var(--ink); border-color: #fff; }
+#vision .vis-ctl .tog[aria-pressed="true"] { background: var(--grad); color: #fff; border-color: transparent; }
+#vision .pipe { margin-top: 16px; gap: 6px; }
+#vision .pipe li { background: rgba(255,255,255,.06); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); padding: 9px 14px 9px 10px; border-radius: 16px; grid-template-columns: 26px 1fr; gap: 10px; }
+#vision .pipe li::before { width: 26px; height: 26px; font-size: 12px; background: rgba(255,255,255,.14); }
+#vision .pipe li.hot::before { background: var(--grad); }
+#vision .pipe b { font-size: 14px; } #vision .pipe small { font-size: 12.5px; color: var(--on-ink-mute); }
+#vision .vis-legend { left: auto; right: 96px; top: 16px; justify-content: flex-end; }
+#vision .vis-term { left: max(24px, calc((100vw - 1240px) / 2 + 24px)); right: auto; bottom: 22px; max-width: none; z-index: 4; }
+#vision .vis .vis-radar { position: absolute; right: 92px; top: 50px; width: 150px; height: 150px; pointer-events: none; }
+@media (max-height: 800px) and (min-width: 900px) { #vision .pipe li { padding-block: 6px; } #vision .pipe small { display: none; } #vision .vis .vis-radar { width: 118px; height: 118px; top: 46px; } }
+@media (max-width: 900px) {
+  #vision .vshade { background: linear-gradient(180deg, rgba(12,12,16,.92) 0%, rgba(12,12,16,.75) 40%, rgba(12,12,16,0) 62%); }
+  #vision .vfront { align-items: flex-start; }
+  #vision .pipe { display: none; }
+  #vision .vis .vis-radar { right: 12px; top: auto; bottom: 12px; width: 104px; height: 104px; }
+  #vision .vis-legend { display: none; }
+  #vision .vis-term { display: block; left: 12px; right: 124px; bottom: 16px; font-size: 11px; }
+  #vision .vis.full > svg#visSvg { }
+}
+</style>
+</head>
+<body>
+
+
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <a class="logo" href="#top" aria-label="Locus, back to top"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3d3d"/><stop offset=".5" stop-color="#a43cff"/><stop offset="1" stop-color="#2f5bff"/></linearGradient></defs><path fill="url(#lg)" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2Z"/></svg>Locus</a>
+    <ul class="nav-links">
+      <li><a href="#hallway" data-grp="problem">Problem</a></li>
+      <li><a href="#model" data-grp="solution">Solution</a></li>
+      <li><a href="#evolution" data-grp="testing">Testing</a></li>
+      <li><a href="#survey" data-grp="discovery">Discovery</a></li>
+      <li><a href="#team" data-grp="team">Team</a></li>
+    </ul>
+    <button class="tour-btn" id="tourBtn" type="button" aria-pressed="false" title="Show only the pages for a 5-minute overview">5-min tour</button>
+  </div>
+</header>
+<ol class="rail" id="rail" aria-label="Pages"></ol>
+
+<main>
+
+<!-- 01 HERO -->
+<section class="s" id="top" data-core="20" data-name="Intro" data-grp="top">
+  <div class="wrap">
+    <div class="hero">
+      <div class="card grad reveal">
+        <ul class="pills"><li class="pill">dC3i Phase 1</li><li class="pill">WashU</li><li class="pill">Assistive tech</li></ul>
+        <div>
+          <h1>Locus Suit</h1>
+          <p style="font-size:clamp(18px,1.9vw,24px); font-weight:600; line-height:1.35; margin:14px 0 0; max-width:22em;">Restoring independence in every step. A hands-free wearable that turns the space around you into touch.</p>
+        </div>
+      </div>
+      <div class="card white reveal" style="--d:1; padding:0;"><img src="media/worn.webp" alt="A tester wearing the Locus haptic vest and the glasses with the clip-on vision module" width="714" height="894"></div>
+      <div class="card ink reveal" style="--d:2">
+        <div><p class="k" style="margin:0 0 4px;">Built by</p><p style="margin:0; font-weight:700; font-size:16px; line-height:1.4;">Gaurish Agrawal · Sonia Palamand · Jacqueline Chuang</p></div>
+        <a class="arrow" href="#hallway" aria-label="Start">→</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 HALLWAY -->
+<section class="s" id="hallway" data-core="35" data-name="Imagine" data-grp="problem">
+  <div class="wrap grid g-tm">
+    <div>
+      <ul class="pills reveal"><li class="pill">The problem</li></ul>
+      <h2 class="reveal" style="--d:1; margin-top:16px;">Imagine walking <span class="gt">through a hallway.</span></h2>
+      <p class="lede reveal" style="--d:2" id="hallText">An empty corridor is easy. Tap through what it’s like on a normal day.</p>
+      <div class="steps reveal" style="--d:3" role="tablist" aria-label="Hallway steps" id="hallSteps">
+        <button role="tab" aria-selected="true" data-i="0">Hallway</button>
+        <button role="tab" aria-selected="false" data-i="1">Add people</button>
+        <button role="tab" aria-selected="false" data-i="2">Add noise</button>
+        <button role="tab" aria-selected="false" data-i="3">Lights off</button>
+      </div>
+    </div>
+    <div class="reveal" style="--d:2">
+      <div class="stage" id="hallStage">
+        <img class="on" src="media/hall-1.webp" alt="Line drawing of an empty hallway with doors on both sides" width="1004" height="565">
+        <img src="media/hall-2.webp" alt="The same hallway with three people walking" width="1004" height="565" loading="lazy">
+        <img src="media/hall-3.webp" alt="The hallway with people, a cart, a traffic cone, a box on the floor and an open door" width="1004" height="565" loading="lazy">
+        <div class="dark"><p>This is how navigation looks every day<br>for millions of people.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 PROBLEM -->
+<section class="s dark" id="problem" data-name="The problem" data-grp="problem">
+  <div class="wrap">
+    <div class="head">
+      <div><ul class="pills reveal"><li class="pill">The problem</li></ul><h2 class="reveal" style="--d:1; margin-top:16px;">Mobility hazards <span class="gt">are everywhere.</span></h2></div>
+      <p class="small reveal" style="--d:2; max-width:30em;">Stairs, curbs, drop-offs, crowds, low light and head-level obstacles. The result is more falls, less confidence and less independent movement.</p>
+    </div>
+    <div class="cards c4 mstats">
+      <div class="card ink reveal" style="--d:1"><div class="stat">2.2B</div><div class="stat-l">people live with visual impairment worldwide</div></div>
+      <div class="card reveal" style="--d:2"><div class="stat">7M</div><div class="stat-l">people in the US live with severe vision loss</div></div>
+      <div class="card grad reveal" style="--d:3"><div class="stat">46.7%</div><div class="stat-l">of older adults with severe vision loss report falls, vs. 27.7% without</div></div>
+      <div class="card reveal" style="--d:4"><div class="stat">$50B+</div><div class="stat-l">a year in medical costs from falls</div></div>
+    </div>
+    <div class="nexthead reveal" style="--d:2"><h3>Existing tools <span class="gt">aren’t enough.</span></h3><span class="small">Each is limited by reach, direction, training or cost.</span></div>
+    <div class="cards c3 toolrow">
+      <div class="card media bleed reveal" style="--d:1"><img src="media/cane.jpg" alt="A person crossing a street with a white cane" width="768" height="513" loading="lazy" style="aspect-ratio:16/8; object-fit:cover;"><div class="txt"><h3>White cane</h3><p class="small" style="margin-top:4px;">Reliable and low-cost, but arm’s reach and ground level only.</p></div></div>
+      <div class="card media bleed reveal" style="--d:2"><img src="media/dog.jpg" alt="A guide dog in a harness on a sidewalk" width="400" height="266" loading="lazy" style="aspect-ratio:16/8; object-fit:cover;"><div class="txt"><h3>Guide dog</h3><p class="small" style="margin-top:4px;">Great support, but costly, years of training, and limited by housing and allergies.</p></div></div>
+      <div class="card ink reveal" style="--d:3; justify-content:flex-end; min-height:100%;"><p class="k">Camera apps</p><h3 style="font-size:26px;">Wi-Fi bound, audio only, one direction at a time.</h3><p class="small" style="margin-top:10px;">Audio competes with hearing, which blind users rely on to get around.</p></div>
+    </div>
+    <p class="cap reveal" style="--d:4; margin-top:12px;">Stats: WHO, CDC.</p>
+  </div>
+</section>
+
+<!-- SOLUTION IN 3D -->
+<section class="s" id="model" data-core="50" data-name="The solution" data-grp="solution">
+  <div class="wrap grid g-mt">
+    <div class="m3d reveal" id="m3d">
+      <canvas id="m3dCanvas" aria-label="3D model of a mannequin wearing the Locus vest and glasses. Drag to spin." role="img"></canvas>
+      <img class="m3d-fallback" src="media/kit.webp" alt="The Locus haptic vest and glasses" width="1600" height="900" hidden>
+      <div class="m3d-hint" id="m3dHint">Drag to spin</div>
+      <div class="m3d-views" role="group" aria-label="Camera views">
+        <button type="button" data-v="front" aria-pressed="true">Front</button>
+        <button type="button" data-v="side" aria-pressed="false">Side</button>
+        <button type="button" data-v="back" aria-pressed="false">Back</button>
+        <button type="button" data-v="glasses" aria-pressed="false">Glasses</button>
+      </div>
+    </div>
+    <div>
+      <ul class="pills reveal"><li class="pill">The solution</li><li class="pill">2 parts</li></ul>
+      <h2 class="reveal" style="--d:1; margin-top:16px;">Hands-free, <span class="gt">all the way around.</span></h2>
+      <p class="lede reveal" style="--d:2">Drag the model to turn it. Hover a part to find it on the wearer.</p>
+      <ol class="parts3d reveal" style="--d:3" id="parts3d">
+        <li><button type="button" data-k="vest"><b>Haptic vest</b><small>A zip vest that fits a wide range of body types. The closer the obstacle, the stronger that side buzzes.</small></button></li>
+        <li><button type="button" data-k="sensors"><b>8 depth sensors + motors</b><small>One pair per direction. Senses up to 4 m, warns at 1.5 m, stop cue at 0.5 m.</small></button></li>
+        <li><button type="button" data-k="clip"><b>Head-level hazard clip</b><small>17.3 g, clips onto regular glasses. Catches signs, shelves and cabinets a cane misses, and doesn’t store images.</small></button></li>
+      </ol>
+      <label class="zones-toggle reveal" style="--d:4"><input type="checkbox" id="zonesToggle" checked> Show sensing zones</label>
+    </div>
+  </div>
+</section>
+
+<!-- 06 TOUCH SIM -->
+<section class="s dark" id="touch" data-core="40" data-name="Felt as touch" data-grp="solution">
+  <div class="wrap grid g-tm">
+    <div>
+      <ul class="pills reveal"><li class="pill">How it feels</li></ul>
+      <h2 class="reveal" style="--d:1; margin-top:16px;">Depth, <span class="gt">felt as touch.</span></h2>
+      <p class="lede reveal" style="--d:2">Eight motors sit around the torso: N, NE, E, SE, S, SW, W, NW. Something close on your left, you feel your left. Path clear, you feel nothing. Testers got it within minutes.</p>
+      <div class="say reveal" style="--d:3" id="say">
+        <img src="media/stairs.jpg" alt="A person wearing the vest walking down a staircase, with the floor-level change highlighted" width="470" height="490" loading="lazy">
+        <div class="say-txt">
+          <p class="say-k"><span class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>Spoken cue · glasses clip</p>
+          <p class="say-q">“Stairs ahead, descending. First step in 2.10 meters.”</p>
+          <p class="say-s">Touch tells you something is there. The clip tells you what it is.</p>
+          <button type="button" class="say-btn" id="sayBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>Hear it</button>
+        </div>
+      </div>
+    </div>
+    <div class="sim reveal" style="--d:2">
+      <svg id="simSvg" viewBox="0 0 520 440" role="img" aria-label="Interactive top-down view: drag the obstacle around the wearer and watch which motor buzzes">
+        <circle cx="260" cy="220" r="230" fill="none" stroke="rgba(255,255,255,.10)" stroke-width="1.5"/>
+        <circle cx="260" cy="220" r="117" fill="rgba(164,60,255,.10)" stroke="rgba(164,60,255,.55)" stroke-width="1.5" stroke-dasharray="5 6"/>
+        <circle cx="260" cy="220" r="72" fill="rgba(255,61,61,.14)" stroke="rgba(255,61,61,.7)" stroke-width="1.5" stroke-dasharray="5 6"/>
+        <ellipse cx="260" cy="220" rx="44" ry="32" fill="#2a2a31" stroke="rgba(255,255,255,.35)" stroke-width="2"/>
+        <path d="M252 196 L260 184 L268 196" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <g id="motors"></g>
+        <g id="obst" transform="translate(370 110)" style="cursor:grab;">
+          <circle r="30" fill="rgba(255,255,255,.06)" stroke="#ffffff" stroke-opacity=".3" stroke-width="1.5"/>
+          <g class="ob" data-o="person" fill="#ffffff"><circle cx="0" cy="-13" r="6.5"/><path d="M-11 17 V2 a11 11 0 0 1 22 0 V17 Z"/></g>
+          <g class="ob" data-o="door" fill="none" stroke="#ffffff" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" style="display:none"><path d="M-12 19 V-18 H12 V19"/><path d="M-19 19 H19" stroke-opacity=".5"/></g>
+          <g class="ob" data-o="chair" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M-9 -17 V5 H11"/><path d="M-9 5 V18 M11 5 V18"/></g>
+        </g>
+      </svg>
+      <div class="legend"><span style="--c:rgba(255,255,255,.35)">sensed (up to 4 m)</span><span style="--c:#a43cff">warning (1.5 m)</span><span style="--c:#ff3d3d">stop (0.5 m)</span></div>
+      <p class="sim-out" id="simOut" aria-live="polite">Drag the person, or tap anywhere around the wearer.</p>
+      <div class="sim-ctl">
+        <button type="button" data-p="0,-2.4" data-o="person">Person ahead</button>
+        <button type="button" data-p="-1.0,0.15" data-o="door">Doorframe on the left</button>
+        <button type="button" data-p="0.3,0.3" data-o="chair">Chair behind, close</button>
+        <button type="button" data-p="2.9,3.2" data-o="person">Clear path</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VISION: interactive layers -->
+<section class="s" id="vision" data-name="How the clip sees" data-grp="solution">
+  <div class="vis full" id="vis">
+    <svg id="visSvg" viewBox="-210 0 1010 500" preserveAspectRatio="xMidYMid slice" role="img" aria-label="A hallway seen by the glasses camera, with a chair you can drag. Layers show depth, segmentation and detection boxes." tabindex="0"></svg>
+    <div class="vis-legend" id="visLegend" aria-hidden="true"></div>
+    <div class="vis-term" id="visTerm" aria-live="polite"></div>
+    <svg class="vis-radar" id="visRadar" viewBox="-76 -76 152 152" aria-hidden="true"></svg>
+  </div>
+  <div class="vshade" aria-hidden="true"></div>
+  <div class="wrap vfront">
+    <div class="vpanel">
+      <ul class="pills reveal"><li class="pill">Perception</li><li class="pill">Glasses clip</li></ul>
+      <h2 class="reveal" style="--d:1; margin-top:14px;">How the <span class="gt">clip sees.</span></h2>
+      <p class="lede reveal" style="--d:2; margin-top:10px;">Drag the chair anywhere in the hall. Switch layers to see each step.</p>
+      <div class="vis-ctl reveal" style="--d:3" role="group" aria-label="Vision layers">
+        <button type="button" data-mode="cam" aria-pressed="false">Camera</button>
+        <button type="button" data-mode="depth" aria-pressed="true">Depth</button>
+        <button type="button" data-mode="seg" aria-pressed="false">Segmentation</button>
+        <button type="button" class="tog" data-tog="boxes" aria-pressed="true">Boxes</button>
+        <button type="button" class="tog" data-tog="near" aria-pressed="true">Nearest point</button>
+      </div>
+      <ol class="pipe reveal" style="--d:4" id="pipe">
+        <li data-step="depth"><div><b>Depth from one camera</b><small>Every pixel gets a distance. Blue is close, red is far.</small></div></li>
+        <li data-step="seg"><div><b>Segmentation</b><small>Floor, wall, door, person, chair and sign.</small></div></li>
+        <li data-step="boxes"><div><b>Detection boxes</b><small>A box, a label and a confidence score.</small></div></li>
+        <li data-step="near"><div><b>Nearest point to a cue</b><small>Picks which side buzzes, and how hard.</small></div></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- LAB CLIPS -->
+<section class="s" id="lab" data-name="From the lab" data-grp="solution">
+  <div class="wrap">
+    <div class="head">
+      <div><ul class="pills reveal"><li class="pill">Real footage</li><li class="pill">Development builds</li></ul><h2 class="reveal" style="--d:1; margin-top:16px;">Straight from <span class="gt">the lab.</span></h2></div>
+      <p class="small reveal" style="--d:2; max-width:30em;">The same steps on real camera feeds while we built and tuned the pipeline.</p>
+    </div>
+    <div class="clips reveal" style="--d:2">
+      <figure class="clip"><video class="lazyvid" src="media/vis-depth.mp4" poster="media/vis-depth.jpg" muted loop playsinline preload="none" aria-label="A depth map on a laptop: a person close to the camera shows in blue, the room behind in orange"></video><figcaption><i>1</i><div><b>Depth map</b><span>A person up close reads blue; the room behind reads orange.</span></div></figcaption></figure>
+      <figure class="clip"><video class="lazyvid" src="media/vis-detect.mp4" poster="media/vis-detect.jpg" muted loop playsinline preload="none" aria-label="A chair detected with a box and a confidence score, and a red marker on the nearest point with its distance in meters"></video><figcaption><i>2</i><div><b>Detect and measure</b><span>A box on the chair, and its nearest point in meters.</span></div></figcaption></figure>
+      <figure class="clip"><video class="lazyvid" src="media/vis-radar2.mp4" poster="media/vis-radar2.jpg" muted loop playsinline preload="none" aria-label="The directional radar view: the front sector lights up and changes color as the obstacle gets closer"></video><figcaption><i>3</i><div><b>Directional radar</b><span>The front sector lights up, and shifts color as it gets closer.</span></div></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- EVOLUTION -->
+<section class="s" id="evolution" data-core="30" data-name="How it evolved" data-grp="testing">
+  <div class="wrap">
+    <div class="head">
+      <div><ul class="pills reveal"><li class="pill">Iterations</li></ul><h2 class="reveal" style="--d:1; margin-top:16px;">From a shoe <span class="gt">to a vest.</span></h2></div>
+      <p class="lede reveal" style="--d:2; max-width:26em; margin:0;">Same idea, six bodies. Each round moved the sensors to where the cues were clearer.</p>
+    </div>
+    <div class="evo-row reveal" style="--d:2">
+      <figure class="evo-tile"><div class="im"><img src="media/it-shoe.jpg" alt="Shoe-mounted prototype: sensors and wiring strapped to a sneaker" width="290" height="302" loading="lazy"></div><figcaption><span>01</span><b>Shoe</b><small>Foot movement and floor reflections made readings unreliable.</small></figcaption></figure>
+      <figure class="evo-tile"><div class="im"><img src="media/it-back.jpg" alt="Back-mounted prototype: a sensor board and wiring on a tester's back" width="294" height="326" loading="lazy"></div><figcaption><span>02</span><b>Back</b><small>Moved the sensors and motors up to the back.</small></figcaption></figure>
+      <figure class="evo-tile"><div class="im"><img src="media/it-belt.jpg" alt="Belt-mounted prototype worn around the waist with wires running around it" width="507" height="576" loading="lazy"></div><figcaption><span>03</span><b>Belt</b><small>Around the waist, where most surveyed users wanted cues.</small></figcaption></figure>
+      <figure class="evo-tile"><div class="im"><img src="media/it-strap.jpg" alt="Strap-mounted prototype laid flat: a single strap with sensors and a control board" width="874" height="496" loading="lazy"></div><figcaption><span>04</span><b>Strap</b><small>Sensors and motors on a single strap.</small></figcaption></figure>
+      <figure class="evo-tile"><div class="im"><img src="media/it-vest-early.jpg" alt="Early vest with wiring sewn along the inside" width="479" height="669" loading="lazy"></div><figcaption><span>05</span><b>Early vest</b><small>Everything moved into a vest for fit and quick trials.</small></figcaption></figure>
+      <figure class="evo-tile now"><div class="im"><img src="media/worn.webp" alt="A tester wearing today’s Locus vest and glasses" width="714" height="894" loading="lazy"></div><figcaption><span>06</span><b>Today</b><small>Zip vest with 8 sensor-motor pairs, plus the glasses clip.</small></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- INSIDE: exploded view -->
+<section class="s dark" id="inside" data-name="Inside the vest" data-grp="testing">
+  <div class="wrap grid g-mt">
+    <div class="x3d reveal" id="x3d">
+      <canvas id="x3dCanvas" role="img" aria-label="Exploded 3D view of the Locus vest and glasses clip, with each part floating apart. Drag to spin."></canvas>
+      <img class="x3d-fallback" src="media/vest-inside.webp" alt="The inside of the vest: depth sensors and motors along the hem, wiring to a control board, and the glasses" width="1106" height="623" hidden>
+      <div class="x3d-tags" id="x3dTags" aria-hidden="true"></div>
+      <div class="x3d-hint" id="x3dHint">Drag to spin</div>
+      <div class="x3d-scale">Small parts shown larger. Not to scale.</div>
+      <div class="x3d-bar">
+        <button type="button" id="x3dPlay">Assemble</button>
+        <label for="x3dRange">Assembled</label>
+        <input type="range" id="x3dRange" min="0" max="100" value="100" aria-label="Explode the vest apart">
+        <label for="x3dRange">Exploded</label>
+      </div>
+    </div>
+    <div>
+      <ul class="pills reveal"><li class="pill">Under the hood</li><li class="pill">8 parts</li></ul>
+      <h2 class="reveal" style="--d:1; margin-top:16px;">Take it <span class="gt">apart.</span></h2>
+      <p class="lede reveal" style="--d:2">Every part of the prototype, floating where it sits. Pick one to see what it does.</p>
+      <ol class="xparts reveal" style="--d:3" id="xparts">
+        <li><button type="button" data-k="0" aria-pressed="false"><i>01</i>Mesh shell</button></li>
+        <li><button type="button" data-k="1" aria-pressed="false"><i>02</i>Sensor band</button></li>
+        <li><button type="button" data-k="2" aria-pressed="true"><i>03</i>Depth sensors ×8</button></li>
+        <li><button type="button" data-k="3" aria-pressed="false"><i>04</i>Motors ×8</button></li>
+        <li><button type="button" data-k="4" aria-pressed="false"><i>05</i>Controller board</button></li>
+        <li><button type="button" data-k="5" aria-pressed="false"><i>06</i>Battery pack</button></li>
+        <li><button type="button" data-k="6" aria-pressed="false"><i>07</i>Wiring harness</button></li>
+        <li><button type="button" data-k="7" aria-pressed="false"><i>08</i>Glasses clip</button></li>
+      </ol>
+      <div class="xspec reveal" style="--d:4" id="xspec" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 SHOWCASE -->
+<section class="s" id="showcase" data-name="Tested and talked to" data-grp="testing">
+  <div class="wrap">
+    <div class="head">
+      <div><ul class="pills reveal"><li class="pill">McKelvey Showcase</li><li class="pill">50+ testers</li><li class="pill">24 interviews</li></ul><h2 class="reveal" style="--d:1; margin-top:16px;">Tried by <span class="gt">50+ people.</span></h2></div>
+      <p class="small reveal" style="--d:2; max-width:32em;">Students, older adults and Clayton community members wore the vest and glasses through real hallways, while a live display showed which motors fired. At the Council of the Blind, testers asked to buy units once available.</p>
+    </div>
+    <a class="watch reveal" style="--d:2" href="https://www.youtube.com/watch?v=IDM4owhf4fY" target="_blank" rel="noopener" aria-label="Watch the Locus Suit video on YouTube"><img class="photo" src="media/showcase.jpg" alt="McKelvey Showcase: a tester wearing the vest and glasses beside monitors showing the live haptic and depth display" width="1634" height="554" loading="lazy"><span class="wplay"><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg></span><b>See it in action</b><small>Watch on YouTube</small></span></a>
+    <div class="talk reveal" style="--d:3">
+      <div class="card ink"><div class="stat">8</div><div class="stat-l">AT leaders and program coordinators</div></div>
+      <div class="card"><div class="stat">12</div><div class="stat-l">medtech founders and judges</div></div>
+      <div class="card"><div class="stat">4</div><div class="stat-l">visually impaired users</div></div>
+      <div class="card talk-logos"><p class="k" style="margin:0 0 10px;">Who we talked to</p><div class="logos sm">
+      <img src="media/lg-nih.png" alt="National Institutes of Health" loading="lazy">
+      <img src="media/lg-washu-orange-w.png" alt="VentureWell" loading="lazy">
+      <img src="media/lg-svc-rocket.png" alt="Skandalaris Venture Competition" loading="lazy">
+      <img src="media/lg-sling.png" alt="Sling Health" loading="lazy">
+      <img src="media/lg-wustl-shield.png" alt="Washington University in St. Louis" loading="lazy">
+      <img src="media/lg-moat.png" alt="Missouri Assistive Technology" loading="lazy">
+      <img src="media/lg-mcb.png" alt="Missouri Council of the Blind" loading="lazy">
+      <img src="media/lg-stl-village.png" alt="St. Louis Village" loading="lazy">
+      <img src="media/lg-bmes.png" alt="Biomedical Engineering Society" loading="lazy">
+      <img src="media/lg-same.png" alt="Society of American Military Engineers" loading="lazy">
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 SURVEY -->
+<section class="s" id="survey" data-core="40" data-name="What users told us" data-grp="discovery">
+  <div class="wrap">
+    <div class="head">
+      <div><ul class="pills reveal"><li class="pill">Customer discovery</li><li class="pill">N = 32</li></ul><h2 class="reveal" style="--d:1; margin-top:16px;">We asked <span class="gt">before we built.</span></h2></div>
+      <p class="small reveal" style="--d:2; max-width:31em;">32 adults 60+ with vision loss not corrected by glasses, through St. Louis Village and the Clayton community. Scale questions show the 31 who answered them.</p>
+    </div>
+    <div class="qgrid reveal" style="--d:2" id="qGrid"></div>
+  </div>
+</section>
+
+<!-- 10 LEARNED -->
+<section class="s dark" id="learned" data-core="30" data-name="What flipped" data-grp="discovery">
+  <div class="wrap">
+    <div class="head">
+      <div><ul class="pills reveal"><li class="pill">Customer discovery</li></ul><h2 class="reveal" style="--d:1; margin-top:16px;">What <span class="gt">flipped.</span></h2></div>
+      <p class="small reveal" style="--d:2; max-width:28em;">Three assumptions that interviews changed. Tap a card to see what we learned.</p>
+    </div>
+    <div class="cards c3">
+      <button class="flip reveal" style="--d:1" type="button" aria-pressed="false"><span class="flip-in"><span class="face front"><span class="tag">We assumed</span><span class="a">A good prototype just keeps getting better at what it does.</span><span class="hint">Tap to flip</span></span><span class="face back"><span class="tag">We learned</span><span class="b">Pivots within the same user group are normal. Form factor matters as much as sensing.</span><span class="hint">Tap to flip back</span></span></span></button>
+      <button class="flip reveal" style="--d:2" type="button" aria-pressed="false"><span class="flip-in"><span class="face front"><span class="tag">We assumed</span><span class="a">We would sell direct to consumers.</span><span class="hint">Tap to flip</span></span><span class="face back"><span class="tag">We learned</span><span class="b">Reach users through B2B: rehab centers, schools and AT programs bring trust and case studies.</span><span class="hint">Tap to flip back</span></span></span></button>
+      <button class="flip reveal" style="--d:3" type="button" aria-pressed="false"><span class="flip-in"><span class="face front"><span class="tag">We assumed</span><span class="a">Solving the core navigation problem is enough.</span><span class="hint">Tap to flip</span></span><span class="face back"><span class="tag">We learned</span><span class="b">Discreet, comfortable design drives adoption. People care about dignity, not just detection.</span><span class="hint">Tap to flip back</span></span></span></button>
+    </div>
+    <div class="cards c4" style="margin-top:16px;">
+      <div class="card reveal" style="--d:2"><p class="k">Form factor</p><p style="margin:0; font-weight:600;">Torso and hands-free work. Users adapt quickly.</p></div>
+      <div class="card reveal" style="--d:3"><p class="k">Be discreet</p><p style="margin:0; font-weight:600;">“I don’t want to look like a robot.”</p></div>
+      <div class="card reveal" style="--d:4"><p class="k">Start with B2B</p><p style="margin:0; font-weight:600;">Institutions build credibility faster than direct sales.</p></div>
+      <div class="card grad reveal" style="--d:5"><p class="k">Value more</p><p style="margin:0; font-weight:600;">Price has to cover training, warranty and service.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 COMPARE -->
+<section class="s" id="compare" data-name="Compared" data-grp="discovery">
+  <div class="wrap">
+    <div class="head">
+      <div><ul class="pills reveal"><li class="pill">Competitive landscape</li></ul><h2 class="reveal" style="--d:1; margin-top:16px;">An added layer, <span class="gt">not a replacement.</span></h2></div>
+      <p class="small reveal" style="--d:2; max-width:30em;">Locus works alongside a cane or guide dog. Battery and maintenance are the honest gaps we’re closing next.</p>
+    </div>
+    <div class="tbl-wrap reveal" style="--d:2">
+      <table class="cmp">
+        <thead><tr><th scope="col"></th><th scope="col" class="us">Locus Suit</th><th scope="col">White cane</th><th scope="col">Guide dog</th><th scope="col">OrCam</th><th scope="col">WeWALK</th></tr></thead>
+        <tbody>
+          <tr><td>Hands-free</td><td class="us yes">✓</td><td class="no">–</td><td class="no">–</td><td class="yes">✓</td><td class="no">–</td></tr>
+          <tr><td>360° coverage</td><td class="us yes">✓</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="no">–</td></tr>
+          <tr><td>Head-level hazards</td><td class="us yes">✓</td><td class="no">–</td><td class="no">–</td><td class="yes">✓</td><td class="no">–</td></tr>
+          <tr><td>Indoor use</td><td class="us yes">✓</td><td class="no">–</td><td class="no">–</td><td class="no">–</td><td class="no">–</td></tr>
+          <tr><td>Directional feedback</td><td class="us yes">✓</td><td class="no">–</td><td class="yes">✓</td><td class="no">–</td><td class="yes">✓</td></tr>
+          <tr><td>Object and text recognition</td><td class="us yes">✓</td><td class="no">–</td><td class="no">–</td><td class="yes">✓</td><td class="no">–</td></tr>
+          <tr><td>Discreet to wear</td><td class="us yes">✓</td><td class="no">–</td><td class="no">–</td><td class="yes">✓</td><td class="no">–</td></tr>
+          <tr><td>Low maintenance</td><td class="us no">–</td><td class="yes">✓</td><td class="no">–</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><td>All-day battery</td><td class="us no">–</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="cap reveal" style="--d:3;">The current prototype runs about 4–6 hours; full-day battery is a Phase 1 goal.</p>
+  </div>
+</section>
+
+<!-- 13 MARKET -->
+<section class="s dark" id="market" data-name="Market and next steps" data-grp="discovery">
+  <div class="wrap">
+    <div class="head">
+      <div><ul class="pills reveal"><li class="pill">Business model</li><li class="pill">B2B first</li></ul><h2 class="reveal" style="--d:1; margin-top:16px;">Start with <span class="gt">institutions.</span></h2></div>
+      <p class="small reveal" style="--d:2; max-width:30em;">Rehab centers, schools for the blind and state assistive-tech programs buy, train and lend. The same hardware works as a daily aid and an orientation-and-mobility training tool.</p>
+    </div>
+    <div class="cards c4 mstats">
+      <div class="card grad reveal" style="--d:1"><div class="stat">$20.9B</div><div class="stat-l">assistive tech for visual impairment by 2034, plus a smart-glasses tailwind</div></div>
+      <div class="card reveal" style="--d:2"><div class="stat">10–15</div><div class="stat-l">minutes a day staff spend escorting each user, about $1,200–1,800 a year</div></div>
+      <div class="card reveal" style="--d:3"><div class="stat">&gt;25%</div><div class="stat-l">less navigation-assistance time is the pilot target</div></div>
+      <div class="card ink reveal" style="--d:4"><div class="stat" style="font-size:clamp(30px,3vw,42px);">Class I</div><div class="stat-l">anticipated FDA class; reimbursement path through HCPCS E1399</div></div>
+    </div>
+    <div class="nexthead big reveal" style="--d:2"><h2>What’s <span class="gt">next.</span></h2></div>
+    <div class="tl tl-tight">
+      <div class="card ink reveal" style="--d:1"><span class="when">01 · Pilot · 2026–27</span><h3>Pilot with partners</h3><ul class="list"><li>30-unit pilot with rehab partners and Missouri Assistive Technology</li><li>Structured indoor trials for safety and usability</li><li>Validate pricing and manufacturing</li></ul></div>
+      <div class="card reveal" style="--d:2"><span class="when">02 · Scale · 2027–28</span><h3>Small-batch production</h3><ul class="list"><li>Unit cost below $90</li><li>Tier 1 rehab centers through regional distributors</li><li>Explore a caregiver app to manage devices</li></ul></div>
+      <div class="card reveal" style="--d:3"><span class="when">03 · Expand · 2029</span><h3>Broader reach</h3><ul class="list"><li>A larger share of the US rehab market</li><li>Integrate with third-party smart glasses</li><li>Institutional and insurance-supported adoption</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="s" id="team" data-core="25" data-name="Team" data-grp="team">
+  <div class="tbg" aria-hidden="true">
+    <div class="tbox"><img src="media/ev-bmes.jpg" alt="" width="1400" height="1049" loading="lazy"></div>
+  </div>
+  <div class="tshade" aria-hidden="true"></div>
+  <div class="tbox tags" role="group" aria-label="The three founders">
+    <button type="button" class="who l" style="left:37.6%; top:28.2%;" aria-expanded="false"><i></i><span class="ft"><b>Gaurish<span class="ln"> Agrawal</span></b><em>CEO · Product</em><small>Mechanical engineering. System response, integration and product.</small></span></button>
+    <button type="button" class="who u" style="left:46.8%; top:29.4%;" aria-expanded="false"><i></i><span class="ft"><b>Sonia<span class="ln"> Palamand</span></b><em>Hardware · UX · Design</em><small>Electrical engineering and AI. Sensing, mapping and market.</small></span></button>
+    <button type="button" class="who r me" style="left:56.7%; top:28.8%;" aria-expanded="false"><i></i><span class="ft"><b>Jacqueline<span class="ln"> Chuang</span></b><em>CTO · Software</em><small>BME and CS. Owns perception, sensor fusion and the machine-learning pipeline.</small></span></button>
+  </div>
+  <div class="wrap tfront">
+    <div><ul class="pills reveal"><li class="pill">The team</li><li class="pill">WashU</li></ul><h2 class="reveal" style="--d:1; margin-top:16px;">Three founders, <span class="gt">one system.</span></h2><p class="small reveal" style="--d:2; margin-top:10px; color:var(--ink-2);">At the BMES conference. Tap a name for more.</p></div>
+    <details class="trec reveal" style="--d:3">
+      <summary>Recognition and advisors</summary>
+      <ul class="list" style="margin:10px 0 0;"><li>NIH Biomedical Design Challenge 2025, Honorable Mention</li><li>Skandalaris Venture Competition winner</li><li>VentureWell Pioneer Grant</li><li>Sling Health, National Demo Day</li><li>NIH dC3i program, Phase 1</li><li>Featured by WashU McKelvey Engineering, 2026</li></ul>
+      <p class="k" style="margin:12px 0 2px;">Advisors</p><p style="margin:0; font-size:13.5px; line-height:1.5;">Dr. Kantaros · Dr. Klaesner (Sling Health) · Dr. Hanahan · Mrs. Goldfarb (MyselfBelts)</p>
+    </details>
+  </div>
+</section>
+
+<!-- THANK YOU + ON THE ROAD -->
+<section class="s" id="thanks" data-core="10" data-name="Thank you" data-grp="team">
+  <div class="wrap">
+    <div class="endgrid">
+      <div class="endl">
+        <div class="card grad reveal" style="justify-content:space-between;">
+          <ul class="pills"><li class="pill">Locus Suit</li></ul>
+          <div><h1>Thank you.</h1><p style="font-size:19px; font-weight:600; margin:14px 0 0;">Questions and discussion.</p></div>
+        </div>
+        <div class="card ink reveal" style="--d:1"><p class="k" style="margin:0 0 4px;">More, including the audio user manual</p><p style="margin:0; font-weight:700; font-size:18px; user-select:all;">www.locussuit.com</p></div>
+      </div>
+      <div class="bento reveal" style="--d:2">
+      <figure class="b-big"><img src="media/ev-sling.jpg" alt="The Locus team at Sling Health Demo Day in New Orleans, thumbs up in front of the event backdrop" width="1088" height="862" loading="lazy"><figcaption><b>Sling Health National Demo Day</b><span>New Orleans, 2026</span></figcaption></figure>
+      <figure><img src="media/ev-stl.jpg" alt="Two team members at the Locus demo table at the In St. Louis for St. Louis event, with the poster, vest and glasses" width="1400" height="1050" loading="lazy" style="object-position:50% 55%;"><figcaption><b>In St. Louis for St. Louis</b><span>Demo table with the vest and glasses</span></figcaption></figure>
+      <figure><img src="media/ev-skandy.jpg" alt="Skandalaris Venture Competition winners at WashU holding award certificates" width="1200" height="800" loading="lazy"><figcaption><b>Skandalaris Venture Competition</b><span>Winners, WashU</span></figcaption></figure>
+      <figure><img src="media/ev-workshop.jpg" alt="Teams working at tables during the VentureWell workshop at Cooley" width="1400" height="1050" loading="lazy"><figcaption><b>VentureWell Pioneer workshop</b><span>Cooley, Boston</span></figcaption></figure>
+      <figure><img src="media/ev-cooley.jpg" alt="Team members with workshop mentors beside a Cooley podium" width="1050" height="1400" loading="lazy" style="object-position:50% 35%;"><figcaption><b>VentureWell Pioneer Grant</b><span>With workshop mentors</span></figcaption></figure>
+      <figure><img src="media/ev-build.jpg" alt="Students around a workbench with laptops and wiring, one screen showing a live heat map" width="1400" height="1050" loading="lazy"><figcaption><b>Build session</b><span>Wiring and testing at the workbench</span></figcaption></figure>
+      <figure><img src="media/ev-robotics.jpg" alt="Two students in WashU Robotics shirts" width="1050" height="1400" loading="lazy" style="object-position:50% 25%;"><figcaption><b>With WashU Robotics</b><span>Testing day</span></figcaption></figure>
+      </div>
+    </div>
+    <p class="foot" style="margin:12px 4px 0;">Out of the lab and on the road, from New Orleans to Boston. Hover a photo for where it was. Locus Suit is a prototype in development and is not available for sale.</p>
+  </div>
+</section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
+<script>
+(function () {
+  var doc = document.documentElement;
+  doc.classList.add('js');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sections = [].slice.call(document.querySelectorAll('main > .s'));
+
+  // progress rail
+  var rail = document.getElementById('rail');
+  sections.forEach(function (s) {
+    var li = document.createElement('li');
+    if (s.dataset.core) li.className = 'core';
+    var num = sections.indexOf(s) + 1;
+    li.innerHTML = '<a href="#' + s.id + '"><span></span><b>' + (num < 10 ? '0' : '') + num + '</b><i></i></a>';
+    li.querySelector('span').textContent = s.dataset.name + (s.dataset.core ? ' · 5-min' : '');
+    li.querySelector('a').setAttribute('aria-label', num + '. ' + s.dataset.name);
+    rail.appendChild(li);
+  });
+  var key = document.createElement('li'); key.className = 'rail-key'; key.setAttribute('aria-hidden', 'true');
+  key.innerHTML = '5 min <i></i>'; key.title = 'Ringed dots are the 5-minute overview'; rail.appendChild(key);
+  var railLinks = [].slice.call(rail.querySelectorAll('a'));
+  var navLinks = [].slice.call(document.querySelectorAll('.nav-links a'));
+  var nav = document.getElementById('nav');
+
+  function setActive(s) {
+    railLinks.forEach(function (a) { a.classList.toggle('on', a.getAttribute('href') === '#' + s.id); });
+    navLinks.forEach(function (a) { a.classList.toggle('on', a.dataset.grp === s.dataset.grp); });
+    rail.classList.toggle('dark', s.classList.contains('dark'));
+    tourStatus(s);
+  }
+  var tourBtn = document.getElementById('tourBtn'), tourOn = false;
+  var core = sections.filter(function (s) { return s.dataset.core; });
+  function fmt(sec) { var m = Math.floor(sec / 60), r = sec % 60; return m + ':' + (r < 10 ? '0' : '') + r; }
+  function tourStatus(s) {
+    if (!tourBtn) return;
+    if (!tourOn) { tourBtn.textContent = '5-min tour'; return; }
+    var i = core.indexOf(s), at = i < 0 ? core.filter(function (c) { return c.offsetTop < s.offsetTop; }).length : i;
+    var left = core.slice(Math.max(0, at)).reduce(function (t, c) { return t + (+c.dataset.core); }, 0);
+    tourBtn.textContent = '5-min tour · ' + (i < 0 ? '–' : (i + 1)) + '/' + core.length + ' · ' + fmt(left) + ' left';
+  }
+  var activeIO = new IntersectionObserver(function (es) {
+    es.forEach(function (e) { if (e.isIntersecting) setActive(e.target); });
+  }, { rootMargin: '-45% 0px -45% 0px' });
+  sections.forEach(function (s) { activeIO.observe(s); });
+  window.addEventListener('scroll', function () { nav.classList.toggle('scrolled', window.scrollY > 10); }, { passive: true });
+
+  // reveal
+  var revealIO = new IntersectionObserver(function (es) {
+    es.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('in');
+      e.target.querySelectorAll('[data-bars] .fill, .fill').forEach(function (f) { f.style.width = f.dataset.w + '%'; });
+      revealIO.unobserve(e.target);
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(function (el) {
+    var r = el.getBoundingClientRect();
+    if (r.top < window.innerHeight) { el.classList.add('in'); el.querySelectorAll('.fill').forEach(function (f) { f.style.width = f.dataset.w + '%'; }); }
+    else revealIO.observe(el);
+  });
+  if (reduce) document.querySelectorAll('.fill').forEach(function (f) { f.style.width = f.dataset.w + '%'; });
+
+  // play videos only while on screen
+  var vidIO = new IntersectionObserver(function (es) {
+    es.forEach(function (e) {
+      var v = e.target;
+      if (e.isIntersecting && !reduce) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+      else v.pause();
+    });
+  }, { threshold: 0.35 });
+  document.querySelectorAll('video.lazyvid').forEach(function (v) { v.muted = true; vidIO.observe(v); });
+
+  // accordions
+  document.querySelectorAll('.acc').forEach(function (acc) {
+    acc.querySelectorAll('.acc-h').forEach(function (h) {
+      h.addEventListener('click', function () {
+        var li = h.parentElement, open = !li.classList.contains('open');
+        li.classList.toggle('open', open);
+        h.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    });
+  });
+
+  // tabs
+  document.querySelectorAll('.tabs').forEach(function (tabs) {
+    var btns = [].slice.call(tabs.querySelectorAll('button'));
+    btns.forEach(function (b) {
+      b.addEventListener('click', function () {
+        btns.forEach(function (o) {
+          var on = o === b;
+          o.setAttribute('aria-selected', on ? 'true' : 'false');
+          document.getElementById(o.dataset.view).classList.toggle('on', on);
+        });
+      });
+    });
+  });
+  // hallway stepper
+  (function () {
+    var stage = document.getElementById('hallStage'), imgs = stage.querySelectorAll('img'), btns = [].slice.call(document.querySelectorAll('#hallSteps button')), txt = document.getElementById('hallText');
+    var words = ['An empty corridor is easy. Tap through what it’s like on a normal day.', 'Add people, moving in both directions.', 'Add noise: carts, cones, boxes, doors swinging open.', 'Now turn off the lights.'];
+    btns.forEach(function (b) {
+      b.addEventListener('click', function () {
+        var i = +b.dataset.i;
+        btns.forEach(function (o) { o.setAttribute('aria-selected', o === b ? 'true' : 'false'); });
+        imgs.forEach(function (im, k) { im.classList.toggle('on', k === Math.min(i, 2)); });
+        stage.classList.toggle('off', i === 3);
+        txt.textContent = words[i];
+      });
+    });
+  })();
+
+  // haptic simulator: 1 m = 45 px past the torso edge (50 px)
+  (function () {
+    var svg = document.getElementById('simSvg'), g = document.getElementById('motors'), out = document.getElementById('simOut');
+    var obst = document.getElementById('obst'), shapes = obst.querySelectorAll('.ob'), kind = 'person', LABEL = { person: 'Person', door: 'Doorframe', chair: 'Chair' };
+    var CX = 260, CY = 220, names = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'], motors = [];
+    var NS = 'http://www.w3.org/2000/svg';
+    names.forEach(function (n, i) {
+      var a = (i * 45 - 90) * Math.PI / 180, x = CX + Math.cos(a) * 54, y = CY + Math.sin(a) * 40;
+      var grp = document.createElementNS(NS, 'g'); grp.setAttribute('class', 'motor-g');
+      var c = document.createElementNS(NS, 'circle'); c.setAttribute('class', 'motor'); c.setAttribute('cx', x); c.setAttribute('cy', y); c.setAttribute('r', 7); c.setAttribute('fill', '#55555f');
+      var t = document.createElementNS(NS, 'text'); t.setAttribute('x', CX + Math.cos(a) * 82); t.setAttribute('y', CY + Math.sin(a) * 64 + 4); t.setAttribute('text-anchor', 'middle'); t.setAttribute('font-size', '12'); t.setAttribute('font-weight', '700'); t.setAttribute('fill', 'rgba(255,255,255,.5)'); t.setAttribute('font-family', 'Inter, Arial, sans-serif'); t.textContent = n;
+      grp.appendChild(c); grp.appendChild(t); g.appendChild(grp); motors.push({ g: grp, c: c, t: t });
+    });
+    function place(x, y) {
+      var dx = x - CX, dy = y - CY, d = Math.sqrt(dx * dx + dy * dy);
+      if (d < 50) { var k = 50 / (d || 1); dx *= k; dy *= k; x = CX + dx; y = CY + dy; d = 50; }
+      if (d > 240) { var k2 = 240 / d; dx *= k2; dy *= k2; x = CX + dx; y = CY + dy; d = 240; }
+      obst.setAttribute('transform', 'translate(' + x.toFixed(1) + ' ' + y.toFixed(1) + ')');
+      var m = Math.max(0, (d - 50) / 45);
+      var ang = Math.atan2(dy, dx) * 180 / Math.PI + 90; ang = (ang + 360) % 360;
+      var zi = Math.round(ang / 45) % 8, level = m <= 0.5 ? 'stop' : m <= 1.5 ? 'warn' : m <= 4 ? 'sense' : 'none';
+      motors.forEach(function (mo, i) {
+        var on = i === zi && level !== 'none';
+        mo.g.setAttribute('class', 'motor-g' + (on && (level === 'warn' || level === 'stop') ? ' ' + level : ''));
+        mo.c.setAttribute('fill', !on ? '#55555f' : level === 'stop' ? '#ff3d3d' : level === 'warn' ? '#a43cff' : 'rgba(255,255,255,.55)');
+        mo.c.setAttribute('r', !on ? 7 : level === 'stop' ? 11 : level === 'warn' ? 10 : 8);
+        mo.t.setAttribute('fill', on ? '#ffffff' : 'rgba(255,255,255,.5)');
+      });
+      var msg = level === 'stop' ? 'strong, fast buzz. Stop.' : level === 'warn' ? 'warning pulse.' : level === 'sense' ? 'sensed, no buzz yet.' : 'nothing. Path is clear.';
+      out.innerHTML = LABEL[kind] + ' <b>' + m.toFixed(1) + ' m</b> to the <b>' + names[zi] + '</b> → ' + (level === 'none' ? 'motors stay quiet.' : names[zi] + ' motor: ' + msg);
+    }
+    function pt(e) { var r = svg.getBoundingClientRect(); return { x: (e.clientX - r.left) / r.width * 520, y: (e.clientY - r.top) / r.height * 440 }; }
+    var drag = false;
+    svg.addEventListener('pointerdown', function (e) { drag = true; svg.setPointerCapture(e.pointerId); var p = pt(e); place(p.x, p.y); });
+    svg.addEventListener('pointermove', function (e) { if (!drag) return; var p = pt(e); place(p.x, p.y); });
+    svg.addEventListener('pointerup', function () { drag = false; });
+    svg.addEventListener('pointercancel', function () { drag = false; });
+    document.querySelectorAll('.sim-ctl button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        setKind(b.dataset.o);
+        var p = b.dataset.p.split(',').map(Number), mx = p[0], my = p[1], d = Math.sqrt(mx * mx + my * my) || 1;
+        var px = 50 + d * 45; place(CX + mx / d * px, CY + my / d * px);
+      });
+    });
+    function setKind(k) { kind = k; shapes.forEach(function (s) { s.style.display = s.dataset.o === k ? '' : 'none'; }); }
+    place(370, 110);
+  })();
+
+  // survey: every question at once
+  (function () {
+    var Q = [
+      { t: 'How hard is getting around?', s: '1 = easy, 5 = very hard · 31 answered', max: 15, rows: [['1 · Easy', 2], ['2', 3], ['3', 2], ['4', 15], ['5 · Very hard', 9]], hi: [3, 4], take: '24 of 31 say it’s hard or very hard.' },
+      { t: 'How much do current devices help?', s: '1 = low, 5 = high · 31 answered', max: 12, rows: [['1 · Low', 11], ['2', 12], ['3', 6], ['4', 1], ['5 · High', 1]], hi: [0, 1], take: '23 of 31 say their tools barely help.' },
+      { t: 'Where should you feel the feedback?', s: 'Mentions, top 5 shown', max: 23, rows: [['Waist', 23], ['Wrist', 4], ['Head', 2], ['Leg', 1], ['Arm', 1]], hi: [0], take: 'So the cues live at the waist.' },
+      { t: 'How often do you wear glasses or shades?', s: '1 = never, 5 = daily · 31 answered', max: 20, rows: [['5 · Daily', 20], ['4', 7], ['3', 2], ['2', 1], ['1 · Never', 1]], hi: [0], take: 'So the camera clips onto glasses.' },
+      { t: 'What gets in the way most?', s: 'Mentions, all that apply', max: 10, rows: [['Signs', 10], ['Chairs', 8], ['Stairs', 8], ['Doors', 7], ['Tables', 2], ['People', 1]], hi: [0], take: 'Signs are head-level, what a cane misses.' },
+      { t: 'What matters most in a wearable?', s: 'Mean rating, 1 = not at all, 5 = extremely', max: 5, dec: 2, rows: [['Reliable', 4.34], ['Intuitive', 4.12], ['Comfortable', 4.12], ['Easy to maintain', 4.09], ['Easy to wear', 4.09], ['Versatile', 4.0], ['Blends in', 3.69], ['Fashionable', 3.25]], hi: [0], take: 'Reliability first, looks last.' }
+    ];
+    var grid = document.getElementById('qGrid'); if (!grid) return;
+    grid.innerHTML = Q.map(function (q) {
+      return '<div class="qcard"><p class="qt">' + q.t + '</p><p class="qs">' + q.s + '</p><div class="bars">' + q.rows.map(function (r, k) {
+        return '<div class="bar' + (q.hi.indexOf(k) > -1 ? ' hi' : '') + '"><span>' + r[0] + '</span><div class="tr"><div class="fill" data-w="' + (r[1] / q.max * 100).toFixed(1) + '"></div></div><span class="v">' + (q.dec ? r[1].toFixed(q.dec) : r[1]) + '</span></div>';
+      }).join('') + '</div><p class="qtake">' + q.take + '</p></div>';
+    }).join('');
+  })();
+
+  // 3D mannequin with the Locus vest and glasses (three.js, drawn in code)
+  (function () {
+    var box = document.getElementById('m3d'), canvas = document.getElementById('m3dCanvas');
+    if (!box || !canvas) return;
+    if (!window.THREE) { canvas.hidden = true; box.querySelector('.m3d-fallback').hidden = false; return; }
+    var T = window.THREE, renderer;
+    try { renderer = new T.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true }); }
+    catch (e) { canvas.hidden = true; box.querySelector('.m3d-fallback').hidden = false; return; }
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.outputEncoding = T.sRGBEncoding;
+    renderer.shadowMap.enabled = false; renderer.shadowMap.type = T.PCFSoftShadowMap;
+    var scene = new T.Scene();
+    var camera = new T.PerspectiveCamera(28, 1, 0.05, 20);
+
+    // lights: soft studio setup
+    scene.add(new T.HemisphereLight(0xffffff, 0xc8c8d4, 0.55));
+    var key = new T.DirectionalLight(0xffffff, 0.75); key.position.set(1.6, 2.4, 2.2); key.castShadow = true;
+    key.shadow.mapSize.set(1024, 1024); key.shadow.camera.left = -1; key.shadow.camera.right = 1; key.shadow.camera.top = 1.4; key.shadow.camera.bottom = -1; key.shadow.radius = 6; key.shadow.bias = -0.0005;
+    scene.add(key);
+    var rim = new T.DirectionalLight(0xc9b6ff, 0.45); rim.position.set(-2, 1.2, -1.8); scene.add(rim);
+    var fill = new T.DirectionalLight(0xffffff, 0.25); fill.position.set(-1.5, 0.6, 2); scene.add(fill);
+
+    var M = function (c, r, m, extra) { var mat = new T.MeshStandardMaterial({ color: c, roughness: r, metalness: m || 0 }); if (extra) Object.assign(mat, extra); return mat; };
+    var skin = M(0xd3d4dc, 0.55), vestMat = M(0x0e0e12, 0.85), trim = M(0xd9dae2, 0.3, 0.5), zip = M(0x6a6a75, 0.4, 0.6);
+    var dark = M(0x2a2a31, 0.45, 0.2), frame = M(0x141419, 0.35, 0.1), standMat = M(0xc9c9d1, 0.35, 0.4);
+    var glow = new T.MeshStandardMaterial({ color: 0xa43cff, emissive: 0xa43cff, emissiveIntensity: 1.2, roughness: 0.4 });
+
+    var fig = new T.Group(); scene.add(fig);
+    var EZ = 0.7; // torso depth vs width
+    function lathe(pts, mat, zScale) {
+      var g = new T.LatheGeometry(pts.map(function (p) { return new T.Vector2(p[0], p[1]); }), 72);
+      var m = new T.Mesh(g, mat); m.scale.z = zScale || EZ; m.castShadow = true; m.receiveShadow = true; return m;
+    }
+    // torso (hips to neck base), y in meters-ish
+    var torsoPts = [[0, 0], [0.13, 0], [0.165, 0.04], [0.17, 0.09], [0.158, 0.17], [0.152, 0.22], [0.165, 0.32], [0.182, 0.41], [0.188, 0.48], [0.178, 0.54], [0.14, 0.585], [0.07, 0.61], [0.045, 0.615], [0, 0.615]];
+    fig.add(lathe(torsoPts, skin));
+    // neck + head
+    var neck = new T.Mesh(new T.CylinderGeometry(0.043, 0.048, 0.1, 40), skin); neck.position.y = 0.655; neck.castShadow = true; fig.add(neck);
+    var head = new T.Mesh(new T.SphereGeometry(0.088, 64, 48), skin); head.scale.set(0.92, 1.14, 1.0); head.position.y = 0.795; head.castShadow = true; fig.add(head);
+    // short arms
+    [-1, 1].forEach(function (s) {
+      var arm = new T.Mesh(new T.CapsuleGeometry(0.048, 0.13, 12, 32), skin);
+      arm.position.set(s * 0.215, 0.445, 0); arm.rotation.z = s * 0.2; arm.castShadow = true; fig.add(arm);
+    });
+    // stand
+    var pole = new T.Mesh(new T.CylinderGeometry(0.012, 0.012, 0.42, 24), standMat); pole.position.y = -0.21; fig.add(pole);
+    var base = new T.Mesh(new T.CylinderGeometry(0.17, 0.18, 0.025, 64), standMat); base.position.y = -0.425; base.castShadow = true; base.receiveShadow = true; fig.add(base);
+
+    // vest shell: torso profile pushed out, from hem to just under the shoulders
+    function rAt(y) { for (var i = 1; i < torsoPts.length; i++) { var a = torsoPts[i - 1], b = torsoPts[i]; if (y >= a[1] && y <= b[1]) { var t = (y - a[1]) / ((b[1] - a[1]) || 1); return a[0] + (b[0] - a[0]) * t; } } return 0.15; }
+    var vestPts = [], y0 = 0.12, y1 = 0.535;
+    for (var yy = y0; yy <= y1 + 1e-6; yy += 0.0125) vestPts.push([rAt(yy) + 0.014, yy]);
+    vestPts.unshift([rAt(y0) + 0.004, y0 - 0.004]); vestPts.push([rAt(y1) - 0.01, y1 + 0.01]);
+    var vest = lathe(vestPts, vestMat, EZ * 1.02); fig.add(vest);
+    var vestParts = [vest];
+    // reflective bands
+    function band(y, w) {
+      var pts = [[rAt(y - w / 2) + 0.017, y - w / 2], [rAt(y - w / 2) + 0.019, y - w / 2 + 0.002], [rAt(y + w / 2) + 0.019, y + w / 2 - 0.002], [rAt(y + w / 2) + 0.017, y + w / 2]];
+      var m = lathe(pts, trim, EZ * 1.02); fig.add(m); vestParts.push(m); return m;
+    }
+    band(0.255, 0.03); band(0.405, 0.03);
+    // shoulder straps with trim, front to back over each shoulder
+    [-1, 1].forEach(function (s) {
+      var x = s * 0.105, curve = new T.CatmullRomCurve3([
+        new T.Vector3(x, 0.49, 0.125), new T.Vector3(x, 0.565, 0.095), new T.Vector3(s * 0.098, 0.6, 0), new T.Vector3(x, 0.565, -0.095), new T.Vector3(x, 0.49, -0.125)]);
+      var strap = new T.Mesh(new T.TubeGeometry(curve, 40, 0.032, 16, false), vestMat); strap.scale.set(1, 1, 1); strap.castShadow = true; fig.add(strap); vestParts.push(strap);
+      var stripe = new T.Mesh(new T.TubeGeometry(curve, 40, 0.0335, 16, false), trim); stripe.scale.set(0.35, 1.0, 1.0); stripe.position.x = x * 0.65; fig.add(stripe); vestParts.push(stripe);
+    });
+    // zipper down the front
+    var zipLine = new T.Mesh(new T.BoxGeometry(0.008, y1 - y0 - 0.02, 0.006), zip); zipLine.position.set(0, (y0 + y1) / 2, rAt(0.3) * EZ * 1.02 + 0.016); fig.add(zipLine); vestParts.push(zipLine);
+    // small chest pocket (a nod to the real vest)
+    var pocket = new T.Mesh(new T.BoxGeometry(0.06, 0.07, 0.008), dark); pocket.position.set(0.075, 0.45, rAt(0.45) * EZ * 1.02 + 0.012); pocket.rotation.y = 0.32; fig.add(pocket); vestParts.push(pocket);
+
+    // sensing cones that fade out with distance
+    function coneGeo(len, fovDeg) {
+      var g = new T.ConeGeometry(len * Math.tan(fovDeg / 2 * Math.PI / 180), len, 48, 6, true);
+      g.translate(0, -len / 2, 0); g.rotateX(-Math.PI / 2); return g; // apex at origin, opening along +z
+    }
+    function beamMat(color, len) {
+      return new T.ShaderMaterial({
+        uniforms: { uColor: { value: new T.Color(color) }, uOpacity: { value: 0.3 }, uLen: { value: len } },
+        vertexShader: 'varying float vD; uniform float uLen; void main(){ vD = length(position) / uLen; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
+        fragmentShader: 'varying float vD; uniform vec3 uColor; uniform float uOpacity; void main(){ float a = uOpacity * pow(clamp(1.0 - vD, 0.0, 1.0), 1.4); gl_FragColor = vec4(uColor, a); }',
+        transparent: true, depthWrite: false, side: T.DoubleSide
+      });
+    }
+    // 8 sensors around the hem, each with a sensing cone
+    var sensors = [], cones = new T.Group(); fig.add(cones);
+    var sY = 0.165, sR = rAt(sY) + 0.02;
+    for (var i = 0; i < 8; i++) {
+      var a = i * Math.PI / 4; // 0 = front
+      var x = Math.sin(a) * sR, z = Math.cos(a) * sR * EZ * 1.02;
+      var n = new T.Vector3(Math.sin(a) * EZ, 0, Math.cos(a)).normalize();
+      var pod = new T.Mesh(new T.BoxGeometry(0.034, 0.024, 0.014), dark); pod.position.set(x, sY, z); pod.lookAt(x + n.x, sY, z + n.z); pod.castShadow = true; fig.add(pod);
+      var eye = new T.Mesh(new T.CylinderGeometry(0.006, 0.006, 0.004, 20), glow.clone()); eye.rotation.x = Math.PI / 2; eye.position.z = 0.008; pod.add(eye);
+      sensors.push(eye); vestParts.push(pod);
+      // each VL53L1X sees a narrow 27-degree cone straight out from the body
+      var beam = new T.Mesh(coneGeo(0.62, 27), beamMat(0xa43cff, 0.62)); beam.position.set(x, sY, z); beam.lookAt(x + n.x, sY, z + n.z); cones.add(beam);
+    }
+
+    // glasses + clip module
+    var glasses = new T.Group(); glasses.position.set(0, 0.805, 0.0); fig.add(glasses);
+    function rimShape(w, h, r) { var s = new T.Shape(); s.moveTo(-w / 2 + r, -h / 2); s.lineTo(w / 2 - r, -h / 2); s.quadraticCurveTo(w / 2, -h / 2, w / 2, -h / 2 + r); s.lineTo(w / 2, h / 2 - r); s.quadraticCurveTo(w / 2, h / 2, w / 2 - r, h / 2); s.lineTo(-w / 2 + r, h / 2); s.quadraticCurveTo(-w / 2, h / 2, -w / 2, h / 2 - r); s.lineTo(-w / 2, -h / 2 + r); s.quadraticCurveTo(-w / 2, -h / 2, -w / 2 + r, -h / 2); return s; }
+    var outer = rimShape(0.054, 0.036, 0.012), inner = rimShape(0.044, 0.026, 0.008);
+    outer.holes.push(new T.Path(inner.getPoints(24)));
+    var rimG = new T.ExtrudeGeometry(outer, { depth: 0.006, bevelEnabled: false, curveSegments: 16 });
+    var lensMat = new T.MeshStandardMaterial({ color: 0x9fb4ff, roughness: 0.05, metalness: 0.1, transparent: true, opacity: 0.22 });
+    var faceZ = 0.088 + 0.01;
+    [-1, 1].forEach(function (s) {
+      var rimM = new T.Mesh(rimG, frame); rimM.position.set(s * 0.033, 0, faceZ - 0.005); rimM.rotation.y = s * -0.08; glasses.add(rimM);
+      var lens = new T.Mesh(new T.ShapeGeometry(inner, 16), lensMat); lens.position.set(s * 0.033, 0, faceZ - 0.002); lens.rotation.y = s * -0.08; glasses.add(lens);
+      var temple = new T.Mesh(new T.BoxGeometry(0.005, 0.006, 0.105), frame); temple.position.set(s * 0.083, 0.004, faceZ - 0.058); temple.rotation.y = s * 0.06; glasses.add(temple);
+    });
+    var bridge = new T.Mesh(new T.TorusGeometry(0.008, 0.0025, 8, 24, Math.PI), frame); bridge.position.set(0, 0.006, faceZ - 0.002); glasses.add(bridge);
+    var clip = new T.Group(); clip.position.set(-0.092, 0.006, faceZ - 0.04); glasses.add(clip);
+    var clipBody = new T.Mesh(new T.BoxGeometry(0.018, 0.024, 0.05), dark); clip.add(clipBody);
+    var camLens = new T.Mesh(new T.CylinderGeometry(0.0055, 0.0055, 0.004, 24), frame); camLens.rotation.x = Math.PI / 2; camLens.position.set(0, 0.002, 0.026); clip.add(camLens);
+    var camDot = new T.Mesh(new T.CylinderGeometry(0.0025, 0.0025, 0.002, 16), glow.clone()); camDot.rotation.x = Math.PI / 2; camDot.position.set(0, 0.002, 0.029); clip.add(camDot);
+    // the camera on the clip looks forward and a little up, for head-level hazards
+    var clipCone = new T.Mesh(coneGeo(0.42, 48), beamMat(0x2f5bff, 0.42)); clipCone.position.set(0, 0.002, 0.026); clipCone.rotation.x = -0.12; clip.add(clipCone);
+    var clipParts = [clipBody];
+
+    // soft contact shadow
+    // soft contact shadow under the stand (a radial gradient, so it never drifts away from the base)
+    var sc = document.createElement('canvas'); sc.width = sc.height = 128; var sx = sc.getContext('2d');
+    var gr = sx.createRadialGradient(64, 64, 0, 64, 64, 64); gr.addColorStop(0, 'rgba(20,20,25,0.28)'); gr.addColorStop(0.55, 'rgba(20,20,25,0.10)'); gr.addColorStop(1, 'rgba(20,20,25,0)');
+    sx.fillStyle = gr; sx.fillRect(0, 0, 128, 128);
+    var ground = new T.Mesh(new T.PlaneGeometry(0.62, 0.62), new T.MeshBasicMaterial({ map: new T.CanvasTexture(sc), transparent: true, depthWrite: false }));
+    ground.rotation.x = -Math.PI / 2; ground.position.y = -0.4375; fig.add(ground);
+
+    fig.position.y = -0.18;
+
+    // ---------- camera views and interaction ----------
+    var VIEWS = { front: { yaw: 0, tilt: 0.06, dist: 3.15, ty: 0.12 }, side: { yaw: -Math.PI / 2, tilt: 0.06, dist: 3.15, ty: 0.12 }, back: { yaw: Math.PI, tilt: 0.06, dist: 3.15, ty: 0.12 }, glasses: { yaw: 0.55, tilt: 0.12, dist: 0.95, ty: 0.62 } };
+    var cur = { yaw: 0.5, tilt: 0.06, dist: 3.15, ty: 0.12 }, goal = Object.assign({}, VIEWS.front); goal.yaw = -0.35;
+    var auto = true, lastInteract = 0, dragging = false, px = 0, py = 0, highlight = null, visible = false, raf = null, t0 = performance.now();
+    var hint = document.getElementById('m3dHint');
+    function resize() { var w = box.clientWidth, h = box.clientHeight; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); }
+    window.addEventListener('resize', resize); resize();
+    function setView(name) {
+      var v = VIEWS[name]; goal = Object.assign({}, v);
+      // turn the shortest way round
+      var d = goal.yaw - cur.yaw; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; goal.yaw = cur.yaw + d;
+      auto = false; lastInteract = performance.now();
+      box.querySelectorAll('.m3d-views button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.v === name ? 'true' : 'false'); });
+    }
+    box.querySelectorAll('.m3d-views button').forEach(function (b) { b.addEventListener('click', function () { setView(b.dataset.v); }); });
+    canvas.addEventListener('pointerdown', function (e) { dragging = true; px = e.clientX; py = e.clientY; canvas.setPointerCapture(e.pointerId); canvas.classList.add('drag'); auto = false; hint.classList.add('gone'); });
+    canvas.addEventListener('pointermove', function (e) {
+      if (!dragging) return;
+      var dx = e.clientX - px, dy = e.clientY - py; px = e.clientX; py = e.clientY;
+      goal.yaw -= dx * 0.009; goal.tilt = Math.max(-0.15, Math.min(0.5, goal.tilt + dy * 0.004)); cur.yaw = goal.yaw; lastInteract = performance.now();
+      box.querySelectorAll('.m3d-views button').forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
+    });
+    function endDrag() { dragging = false; canvas.classList.remove('drag'); lastInteract = performance.now(); }
+    canvas.addEventListener('pointerup', endDrag); canvas.addEventListener('pointercancel', endDrag);
+
+    // parts list highlights
+    var zonesOn = true, zt = document.getElementById('zonesToggle');
+    zt.addEventListener('change', function () { zonesOn = zt.checked; });
+    var partBtns = [].slice.call(document.querySelectorAll('#parts3d button'));
+    function setHighlight(k) {
+      highlight = k;
+      partBtns.forEach(function (b) { b.classList.toggle('on', b.dataset.k === k); });
+      vestParts.forEach(function (m) { if (m.material && m.material.emissive) m.material.emissive.setHex(k === 'vest' ? 0x2a0f45 : 0x000000); });
+      clipParts.forEach(function (m) { m.material.emissive.setHex(k === 'clip' ? 0x5a1aa0 : 0x000000); });
+      if (k === 'clip') setView('glasses'); else if (k === 'vest' || k === 'sensors') { if (goal.dist < 2) setView('front'); }
+    }
+    vestMat.emissive = new T.Color(0); trim.emissive = new T.Color(0); dark.emissive = new T.Color(0);
+    // clip body uses its own material so highlighting it doesn't light up the sensor pods
+    clipBody.material = dark.clone(); clipParts = [clipBody];
+    partBtns.forEach(function (b) {
+      b.addEventListener('mouseenter', function () { setHighlight(b.dataset.k); });
+      b.addEventListener('focus', function () { setHighlight(b.dataset.k); });
+      b.addEventListener('click', function () { setHighlight(b.dataset.k); });
+    });
+    document.getElementById('parts3d').addEventListener('mouseleave', function () { setHighlight(null); partBtns.forEach(function (b) { b.classList.remove('on'); }); });
+
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function frameLoop(now) {
+      raf = null; if (!visible) return;
+      var t = (now - t0) / 1000;
+      if (!dragging && !auto && now - lastInteract > 6000 && goal.dist > 2) auto = true;
+      if (auto && !reduce) goal.yaw -= 0.0035;
+      cur.yaw += (goal.yaw - cur.yaw) * 0.08; cur.tilt += (goal.tilt - cur.tilt) * 0.08; cur.dist += (goal.dist - cur.dist) * 0.08; cur.ty += (goal.ty - cur.ty) * 0.08;
+      var r = cur.dist;
+      camera.position.set(Math.sin(cur.yaw) * r * Math.cos(cur.tilt), cur.ty + Math.sin(cur.tilt) * r, Math.cos(cur.yaw) * r * Math.cos(cur.tilt));
+      camera.lookAt(0, cur.ty, 0);
+      // sensors pulse in a slow ring; brighter when the sensors row is highlighted
+      sensors.forEach(function (s, i) { var p = 0.5 + 0.5 * Math.sin(t * 3 - i * 0.785); s.material.emissiveIntensity = (highlight === 'sensors' ? 1.6 : 0.8) + p * 1.4; });
+      cones.visible = zonesOn; clipCone.visible = zonesOn;
+      cones.children.forEach(function (c, i) { var p = 0.5 + 0.5 * Math.sin(t * 3 - i * 0.785); c.material.uniforms.uOpacity.value = (highlight === 'sensors' ? 0.42 : 0.2) + p * 0.18; });
+      clipCone.material.uniforms.uOpacity.value = highlight === 'clip' ? 0.45 : 0.26;
+      camDot.material.emissiveIntensity = 1 + 0.8 * (0.5 + 0.5 * Math.sin(t * 4));
+      renderer.render(scene, camera);
+      raf = requestAnimationFrame(frameLoop);
+    }
+    new IntersectionObserver(function (es) {
+      visible = es[0].isIntersecting;
+      if (visible && !raf) { resize(); raf = requestAnimationFrame(frameLoop); }
+    }, { threshold: 0.05 }).observe(box);
+    // draw one frame right away so the page is never blank
+    visible = true; frameLoop(performance.now()); visible = false;
+  })();
+
+  // evolution stepper
+  (function () {
+    var btns = [].slice.call(document.querySelectorAll('#evoSteps button')), imgs = document.querySelectorAll('#evoStage img'), cap = document.getElementById('evoCap');
+    var caps = ['Started at the feet. Foot movement and floor reflections made the readings unreliable.', 'Moved the sensors and motors up to the back.', 'Wrapped them around the waist on a belt, where most surveyed users wanted feedback.', 'Put the sensors and motors on a single strap.', 'Moved everything into a vest, for fit and quick on-site trials.', 'Today: a zip vest with 8 sensor-motor pairs, plus the clip-on glasses module.'];
+    btns.forEach(function (b) { b.addEventListener('click', function () { var i = +b.dataset.i; btns.forEach(function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); }); imgs.forEach(function (im, k) { im.classList.toggle('on', k === i); }); cap.textContent = caps[i]; }); });
+  })();
+
+  document.querySelectorAll('#team .who').forEach(function (f) {
+    f.addEventListener('click', function () { var on = f.getAttribute('aria-expanded') !== 'true'; document.querySelectorAll('#team .who').forEach(function (o) { o.setAttribute('aria-expanded', 'false'); }); f.setAttribute('aria-expanded', on ? 'true' : 'false'); });
+  });
+  // spoken cue: read it out loud and light up each word
+  (function () {
+    var box = document.getElementById('say'), btn = document.getElementById('sayBtn'); if (!box) return;
+    var q = box.querySelector('.say-q'), text = q.textContent;
+    q.innerHTML = text.split(' ').map(function (w) { return '<span class="w">' + w + '</span>'; }).join(' ');
+    var words = [].slice.call(q.querySelectorAll('.w')), timer = null;
+    function light(n) { words.forEach(function (w, i) { w.classList.toggle('on', i < n); }); }
+    function play() {
+      clearInterval(timer); box.classList.add('talk'); light(0);
+      var i = 0; timer = setInterval(function () { light(++i); if (i >= words.length) { clearInterval(timer); setTimeout(function () { box.classList.remove('talk'); }, 400); } }, 330);
+      try { if (window.speechSynthesis) { speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance(text.replace(/[“”]/g, '')); u.rate = 0.95; speechSynthesis.speak(u); } } catch (e) {}
+    }
+    btn.addEventListener('click', play);
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { light(words.length); return; }
+    var io = new IntersectionObserver(function (es) { if (es[0].isIntersecting) { io.disconnect(); setTimeout(function () { clearInterval(timer); box.classList.add('talk'); var i = 0; timer = setInterval(function () { light(++i); if (i >= words.length) { clearInterval(timer); setTimeout(function () { box.classList.remove('talk'); }, 400); } }, 300); }, 700); } }, { threshold: 0.6 });
+    io.observe(box);
+  })();
+  // flip cards
+  document.querySelectorAll('.flip').forEach(function (f) {
+    f.addEventListener('click', function () { f.setAttribute('aria-pressed', f.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); });
+  });
+
+  // full-page paging on desktop: one swipe, wheel notch or key press = one section, always landing on a section top
+  var pageMQ = window.matchMedia('(min-width: 900px) and (min-height: 640px)');
+  var animating = false, raf2 = null, lastWheel = 0, lastAbs = 0, accum = 0, settleTimer = null, locked = false, floor = 0;
+  function paging() { return pageMQ.matches; }
+  function syncMode() { doc.classList.toggle('paging', paging()); }
+  syncMode();
+  if (pageMQ.addEventListener) pageMQ.addEventListener('change', syncMode);
+  function current() {
+    var y = window.scrollY + window.innerHeight * 0.4, idx = 0;
+    sections.forEach(function (s, i) { if (s.offsetTop <= y) idx = i; });
+    return idx;
+  }
+  function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+  function goTo(i) {
+    i = Math.max(0, Math.min(sections.length - 1, i));
+    var to = sections[i].offsetTop, from = window.scrollY, dist = to - from;
+    if (Math.abs(dist) < 2) return;
+    if (raf2) cancelAnimationFrame(raf2);
+    if (reduce) { window.scrollTo(0, to); return; }
+    var dur = Math.min(900, 520 + Math.abs(dist) / window.innerHeight * 60), t0 = null;
+    animating = true; locked = true;
+    doc.style.scrollBehavior = 'auto';
+    function step(t) {
+      if (t0 === null) t0 = t;
+      var k = Math.min(1, (t - t0) / dur);
+      window.scrollTo(0, from + dist * ease(k));
+      if (k < 1) raf2 = requestAnimationFrame(step);
+      else { raf2 = null; animating = false; doc.style.scrollBehavior = ''; }
+    }
+    raf2 = requestAnimationFrame(step);
+  }
+  function step(dir) {
+    var i = current();
+    if (!tourOn) { goTo(i + dir); return; }
+    var j = i + dir;
+    while (j >= 0 && j < sections.length && !sections[j].dataset.core) j += dir;
+    if (j >= 0 && j < sections.length) goTo(j);
+  }
+  if (tourBtn) tourBtn.addEventListener('click', function () {
+    tourOn = !tourOn;
+    tourBtn.setAttribute('aria-pressed', tourOn ? 'true' : 'false');
+    doc.classList.toggle('tour', tourOn);
+    var s = sections[current()];
+    if (tourOn && !s.dataset.core) { var nx = core.filter(function (c) { return c.offsetTop > s.offsetTop; })[0] || core[core.length - 1]; goTo(sections.indexOf(nx)); }
+    tourStatus(s);
+  });
+  function tallRoom(dir) {
+    var s = sections[current()], r = s.getBoundingClientRect(), vh = window.innerHeight;
+    return dir > 0 ? r.bottom > vh + 2 : r.top < -2;
+  }
+  window.addEventListener('wheel', function (e) {
+    if (!paging() || e.ctrlKey) return;
+    if (Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;
+    var dir = e.deltaY > 0 ? 1 : -1, abs = Math.abs(e.deltaY), now = Date.now(), gap = now - lastWheel;
+    if (!animating && tallRoom(dir)) { lastWheel = now; lastAbs = abs; return; }
+    e.preventDefault();
+    lastWheel = now; lastAbs = abs;
+    if (animating) { floor = Infinity; return; }
+    // a new gesture: a pause, or the scroll speeds up again after the move (trackpad momentum only slows down)
+    var fresh = gap > 250 || (floor !== Infinity && abs > floor * 1.8 + 8);
+    floor = Math.min(floor, abs);
+    if (locked) { if (fresh) locked = false; else return; }
+    if (gap > 250) accum = 0;
+    accum += e.deltaY;
+    if (Math.abs(accum) >= 18) { accum = 0; floor = Infinity; step(dir); }
+  }, { passive: false });
+  window.addEventListener('keydown', function (e) {
+    if (!paging() || e.altKey || e.ctrlKey || e.metaKey) return;
+    var t = e.target; if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+    var k = e.key, dir = 0;
+    if (k === 'PageDown' || k === 'ArrowDown' || (k === ' ' && !e.shiftKey)) dir = 1;
+    else if (k === 'PageUp' || k === 'ArrowUp' || (k === ' ' && e.shiftKey)) dir = -1;
+    else if (k === 'Home') { e.preventDefault(); goTo(0); return; }
+    else if (k === 'End') { e.preventDefault(); goTo(sections.length - 1); return; }
+    if (!dir) return;
+    if (t && t.tagName === 'BUTTON' && k === ' ') return;
+    if (tallRoom(dir)) return;
+    e.preventDefault();
+    step(dir);
+  });
+  // nav, rail and tile links glide the same way
+  document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      var id = a.getAttribute('href').slice(1), s = document.getElementById(id), i = sections.indexOf(s);
+      if (i < 0 || !paging()) return;
+      e.preventDefault(); goTo(i);
+    });
+  });
+  // after a scrollbar drag or any other free scroll, settle on the nearest section
+  window.addEventListener('scroll', function () {
+    if (!paging() || animating) return;
+    clearTimeout(settleTimer);
+    settleTimer = setTimeout(function () {
+      if (animating) return;
+      var y = window.scrollY, best = 0, bd = Infinity;
+      sections.forEach(function (s, i) { var d = Math.abs(s.offsetTop - y); if (d < bd) { bd = d; best = i; } });
+      if (sections[best].offsetHeight > window.innerHeight + 2) return;
+      if (bd > 2) goTo(best);
+    }, 220);
+  }, { passive: true });
+  // count-up for a couple of stats
+  document.querySelectorAll('[data-count]').forEach(function (el) {
+    var target = +el.dataset.count, io = new IntersectionObserver(function (es) {
+      if (!es[0].isIntersecting) return; io.disconnect(); if (reduce) return;
+      var st = null; function f(t) { if (!st) st = t; var k = Math.min(1, (t - st) / 900); el.textContent = Math.round(target * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(f); }
+      requestAnimationFrame(f);
+    }, { threshold: 0.5 });
+    io.observe(el);
+  });
+})();
+</script>
+<script>
+// ---------- exploded vest: every part floats apart ----------
+(function () {
+  var box = document.getElementById('x3d'), canvas = document.getElementById('x3dCanvas');
+  if (!box || !canvas) return;
+  var specEl = document.getElementById('xspec'), partBtns = [].slice.call(document.querySelectorAll('#xparts button'));
+  var PARTS = [
+    { n: 'Mesh shell', sub: 'The zip vest everything rides on.', rows: [['Fabric', 'Breathable mesh, zips up the front'], ['Fit', 'A wide range of body types'], ['Next', 'A light T-shirt and a zip-on chest panel']] },
+    { n: 'Sensor band', sub: 'Holds every sensor and motor at one height.', rows: [['Height', 'Waist level, where most surveyed users wanted cues'], ['Spacing', 'One sensor and motor pair every 45°'], ['Directions', 'N, NE, E, SE, S, SW, W, NW']] },
+    { n: 'Depth sensors ×8', sub: 'VL53L1X time-of-flight sensors.', rows: [['How', 'Times an invisible laser pulse bouncing back'], ['Range', 'Up to 4 m'], ['Field of view', 'A 27° cone each, pointing straight out']] },
+    { n: 'Vibration motors ×8', sub: 'One behind each sensor, against the body.', rows: [['Cue', 'The closer the obstacle, the stronger the buzz'], ['Zones', 'Sense ≤ 4 m · warn ≤ 1.5 m · stop ≤ 0.5 m'], ['Learn time', 'Testers read direction within minutes']] },
+    { n: 'Controller board', sub: 'The brain of the vest.', rows: [['Job', 'Reads all 8 sensors and drives all 8 motors'], ['Mapping', 'Distance on each side → vibration strength'], ['Runs', 'On the vest, no internet needed']] },
+    { n: 'Battery pack', sub: 'Powers the vest for a session.', rows: [['Today', 'About 4 to 6 hours'], ['Goal', 'Full-day battery in Phase 1']] },
+    { n: 'Wiring harness', sub: 'Color-coded leads along the band.', rows: [['Route', 'One lead bundle to each sensor and motor pair'], ['Next', 'Consolidated wiring for daily wear']] },
+    { n: 'Glasses clip', sub: 'Raspberry Pi and camera in a custom holder.', rows: [['Weight', '17.3 g, clips onto regular glasses'], ['Sees', 'Head-level and overhead hazards'], ['Images', 'Processed on the spot, never stored']] }
+  ];
+  function showSpec(k) {
+    var p = PARTS[k];
+    specEl.innerHTML = '<p class="k" style="margin:0 0 4px; color:#d7a6ff;">' + (k < 9 ? '0' : '') + (k + 1) + '</p><h3>' + p.n + '</h3><p class="sub">' + p.sub + '</p><dl>' + p.rows.map(function (r) { return '<dt>' + r[0] + '</dt><dd>' + r[1] + '</dd>'; }).join('') + '</dl>';
+  }
+  var sel = 2; showSpec(sel);
+  function fallback() { canvas.hidden = true; box.querySelector('.x3d-fallback').hidden = false; box.querySelector('.x3d-bar').hidden = true; }
+  if (!window.THREE) { fallback(); partBtns.forEach(function (b) { b.addEventListener('click', function () { sel = +b.dataset.k; partBtns.forEach(function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); }); showSpec(sel); }); }); return; }
+  var T = window.THREE, renderer;
+  try { renderer = new T.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true }); } catch (e) { fallback(); return; }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.outputEncoding = T.sRGBEncoding;
+  var scene = new T.Scene(), camera = new T.PerspectiveCamera(30, 1, 0.05, 30);
+  scene.add(new T.HemisphereLight(0xffffff, 0x2a2a36, 0.7));
+  var key = new T.DirectionalLight(0xffffff, 0.9); key.position.set(1.4, 2.2, 2.4); scene.add(key);
+  var rimL = new T.DirectionalLight(0xc59bff, 0.7); rimL.position.set(-2.2, 1.0, -1.6); scene.add(rimL);
+  var rimB = new T.DirectionalLight(0x7f9bff, 0.5); rimB.position.set(2.0, 0.4, -2.0); scene.add(rimB);
+
+  function M(c, r, m, o) { var mat = new T.MeshStandardMaterial({ color: c, roughness: r, metalness: m || 0 }); mat.emissive = new T.Color(0); if (o) Object.assign(mat, o); return mat; }
+  var EZ = 0.7;
+  var torsoPts = [[0, 0], [0.13, 0], [0.165, 0.04], [0.17, 0.09], [0.158, 0.17], [0.152, 0.22], [0.165, 0.32], [0.182, 0.41], [0.188, 0.48], [0.178, 0.54], [0.14, 0.585], [0.07, 0.61], [0.045, 0.615], [0, 0.615]];
+  function rAt(y) { for (var i = 1; i < torsoPts.length; i++) { var a = torsoPts[i - 1], b = torsoPts[i]; if (y >= a[1] && y <= b[1]) { var t = (y - a[1]) / ((b[1] - a[1]) || 1); return a[0] + (b[0] - a[0]) * t; } } return 0.15; }
+  function lathe(pts, mat, seg) { var g = new T.LatheGeometry(pts.map(function (p) { return new T.Vector2(p[0], p[1]); }), seg || 72); var m = new T.Mesh(g, mat); m.scale.z = EZ; return m; }
+
+  var root = new T.Group(); scene.add(root);
+  // each part: a group, its assembled offset (always zero) and an exploded offset
+  var groups = [], mats = [];
+  for (var i = 0; i < 8; i++) { var g = new T.Group(); root.add(g); groups.push(g); mats.push([]); }
+  function own(k, mat) { mats[k].push(mat); return mat; }
+
+  // 01 shell: translucent mesh fabric with a fine wire grid
+  var y0 = 0.12, y1 = 0.535, shellPts = [];
+  for (var yy = y0; yy <= y1 + 1e-6; yy += 0.0125) shellPts.push([rAt(yy) + 0.03, yy]);
+  shellPts.unshift([rAt(y0) + 0.02, y0 - 0.004]); shellPts.push([rAt(0.55) + 0.02, 0.55], [rAt(0.565) + 0.012, 0.565]);
+  var shellMat = own(0, M(0x262631, 0.9, 0, { transparent: true, opacity: 0.42, side: T.DoubleSide, depthWrite: false }));
+  var strapMat = own(0, M(0x3a3a46, 0.85, 0));
+  var shell = lathe(shellPts, shellMat); groups[0].add(shell);
+  var wire = new T.LineSegments(new T.WireframeGeometry(new T.LatheGeometry(shellPts.filter(function (p, i) { return i % 2 === 0; }).map(function (p) { return new T.Vector2(p[0] + 0.001, p[1]); }), 40)), new T.LineBasicMaterial({ color: 0x8d8da0, transparent: true, opacity: 0.12 }));
+  wire.scale.z = EZ; groups[0].add(wire);
+  var trimMat = own(0, M(0xcfd0d8, 0.35, 0.4));
+  [0.255, 0.405].forEach(function (y) { var w = 0.026; var b = lathe([[rAt(y - w / 2) + 0.032, y - w / 2], [rAt(y + w / 2) + 0.032, y + w / 2]], trimMat); groups[0].add(b); });
+  [-1, 1].forEach(function (s) {
+    var curve = new T.CatmullRomCurve3([new T.Vector3(0, 0.5, 0.13), new T.Vector3(0, 0.575, 0.1), new T.Vector3(0, 0.61, 0), new T.Vector3(0, 0.575, -0.1), new T.Vector3(0, 0.5, -0.13)]);
+    var st = new T.Mesh(new T.TubeGeometry(curve, 40, 0.006, 12, false), strapMat); st.scale.x = 5.5; st.position.x = s * 0.1; groups[0].add(st);
+  });
+  var zipM = own(0, M(0x7a7a86, 0.4, 0.6)); var zipL = new T.Mesh(new T.BoxGeometry(0.007, y1 - y0 - 0.02, 0.005), zipM); zipL.position.set(0, (y0 + y1) / 2, (rAt(0.3) + 0.03) * EZ + 0.003); groups[0].add(zipL);
+
+  // 02 band at the hem
+  var sY = 0.165, bandR = rAt(sY) + 0.022;
+  var bandMat = own(1, M(0x3c3c48, 0.7, 0.05));
+  groups[1].add(lathe([[bandR, sY - 0.02], [bandR + 0.003, sY - 0.018], [bandR + 0.003, sY + 0.018], [bandR, sY + 0.02]], bandMat));
+  var stitch = own(1, M(0x6a6a78, 0.6)); [-1, 1].forEach(function (s) { groups[1].add(lathe([[bandR + 0.0035, sY + s * 0.015 - 0.001], [bandR + 0.0035, sY + s * 0.015 + 0.001]], stitch)); });
+
+  // 03 sensors and 04 motors: one pair per 45 degrees
+  var pcbMat = own(2, M(0x2a1f6b, 0.5, 0.1)), chipMat = own(2, M(0x0c0c10, 0.3, 0.2)), padMat = own(2, M(0xd9b45a, 0.3, 0.8));
+  var emit = own(2, new T.MeshStandardMaterial({ color: 0xa43cff, emissive: 0xa43cff, emissiveIntensity: 1.6, roughness: 0.4 }));
+  var coinMat = own(3, M(0xc3c7d1, 0.25, 0.85)), coinTop = own(3, M(0x9ea3ae, 0.3, 0.8));
+  var leadR = M(0xff4b4b, 0.5), leadB = M(0x3b5bff, 0.5);
+  function coneGeo(len, fovDeg) { var g = new T.ConeGeometry(len * Math.tan(fovDeg / 2 * Math.PI / 180), len, 40, 4, true); g.translate(0, -len / 2, 0); g.rotateX(-Math.PI / 2); return g; }
+  function beamMat(color, len) {
+    return new T.ShaderMaterial({ uniforms: { uColor: { value: new T.Color(color) }, uOpacity: { value: 0.25 }, uLen: { value: len } },
+      vertexShader: 'varying float vD; uniform float uLen; void main(){ vD = length(position) / uLen; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
+      fragmentShader: 'varying float vD; uniform vec3 uColor; uniform float uOpacity; void main(){ float a = uOpacity * pow(clamp(1.0 - vD, 0.0, 1.0), 1.5); gl_FragColor = vec4(uColor, a); }',
+      transparent: true, depthWrite: false, side: T.DoubleSide });
+  }
+  var pods = [], coins = [], cones = [];
+  for (var k = 0; k < 8; k++) {
+    var a = k * Math.PI / 4, dir = new T.Vector3(Math.sin(a) * EZ, 0, Math.cos(a)).normalize();
+    var base = new T.Vector3(Math.sin(a) * (bandR + 0.006), sY, Math.cos(a) * (bandR + 0.006) * EZ);
+    var pod = new T.Group(); pod.position.copy(base); pod.lookAt(base.clone().add(dir));
+    var pcb = new T.Mesh(new T.BoxGeometry(0.032, 0.026, 0.0024), pcbMat); pod.add(pcb);
+    var chip = new T.Mesh(new T.BoxGeometry(0.011, 0.0065, 0.003), chipMat); chip.position.z = 0.0026; pod.add(chip);
+    var dot = new T.Mesh(new T.CylinderGeometry(0.0016, 0.0016, 0.001, 12), emit); dot.rotation.x = Math.PI / 2; dot.position.set(-0.0025, 0, 0.0042); pod.add(dot);
+    for (var h = 0; h < 5; h++) { var pad = new T.Mesh(new T.BoxGeometry(0.0022, 0.0022, 0.0006), padMat); pad.position.set(-0.01 + h * 0.005, -0.0105, 0.0013); pod.add(pad); }
+    var cone = new T.Mesh(coneGeo(0.26, 27), beamMat(0xa43cff, 0.26)); cone.position.z = 0.004; pod.add(cone); cones.push(cone);
+    pod.scale.setScalar(1.7); groups[2].add(pod); pods.push({ g: pod, base: base, dir: dir });
+    var coin = new T.Group(); var cb = base.clone().sub(dir.clone().multiplyScalar(0.016)); coin.position.copy(cb); coin.lookAt(cb.clone().add(dir));
+    var disc = new T.Mesh(new T.CylinderGeometry(0.0105, 0.0105, 0.0035, 32), coinMat); disc.rotation.x = Math.PI / 2; coin.add(disc);
+    var top = new T.Mesh(new T.CylinderGeometry(0.0075, 0.0075, 0.0008, 32), coinTop); top.rotation.x = Math.PI / 2; top.position.z = 0.0021; coin.add(top);
+    [[leadR, 0.003], [leadB, -0.003]].forEach(function (l) { var ld = new T.Mesh(new T.CylinderGeometry(0.0009, 0.0009, 0.016, 6), l[0]); ld.rotation.z = Math.PI / 2; ld.position.set(0.016, l[1] - 0.004, 0); coin.add(ld); });
+    coin.scale.setScalar(1.7); groups[3].add(coin); coins.push({ g: coin, base: cb, dir: dir });
+  }
+
+  // 05 controller: perfboard + dev board + headers
+  var ctrl = new T.Group(); groups[4].add(ctrl);
+  var hole = document.createElement('canvas'); hole.width = hole.height = 64; var hc = hole.getContext('2d'); hc.fillStyle = '#d6c08d'; hc.fillRect(0, 0, 64, 64); hc.fillStyle = '#8f7a4c'; for (var hx = 4; hx < 64; hx += 8) for (var hy = 4; hy < 64; hy += 8) { hc.beginPath(); hc.arc(hx, hy, 1.6, 0, 7); hc.fill(); }
+  var holeTex = new T.CanvasTexture(hole); holeTex.wrapS = holeTex.wrapT = T.RepeatWrapping; holeTex.repeat.set(5, 3); holeTex.encoding = T.sRGBEncoding;
+  var perf = new T.Mesh(new T.BoxGeometry(0.09, 0.055, 0.0025), own(4, M(0xffffff, 0.7, 0, { map: holeTex }))); ctrl.add(perf);
+  var dev = new T.Mesh(new T.BoxGeometry(0.052, 0.022, 0.003), own(4, M(0x17337d, 0.45, 0.15))); dev.position.set(-0.008, 0.008, 0.003); ctrl.add(dev);
+  var mcu = new T.Mesh(new T.BoxGeometry(0.012, 0.012, 0.0022), own(4, M(0x111116, 0.35, 0.2))); mcu.position.set(-0.004, 0.008, 0.0055); ctrl.add(mcu);
+  var hdrM = own(4, M(0x141418, 0.5)), pinM = M(0xd9b45a, 0.3, 0.8);
+  [-0.006, 0.022].forEach(function (yh) { var hdr = new T.Mesh(new T.BoxGeometry(0.06, 0.0028, 0.006), hdrM); hdr.position.set(0.004, yh - 0.016, 0.004); ctrl.add(hdr); });
+  for (var p = 0; p < 8; p++) { var term = new T.Mesh(new T.BoxGeometry(0.004, 0.006, 0.005), own(4, M(0xff7a1a, 0.5))); term.position.set(-0.036 + p * 0.0095, -0.022, 0.004); ctrl.add(term); var pin = new T.Mesh(new T.CylinderGeometry(0.0006, 0.0006, 0.004, 6), pinM); pin.position.set(-0.036 + p * 0.0095, -0.017, 0.006); ctrl.add(pin); }
+  var ctrlA = new T.Vector3(-0.115, 0.235, 0.1), ctrlE = new T.Vector3(-0.44, 0.3, 0.18);
+
+  // 06 battery
+  var lab = document.createElement('canvas'); lab.width = 128; lab.height = 72; var lc = lab.getContext('2d');
+  lc.fillStyle = '#f2f2f4'; lc.fillRect(0, 0, 128, 72); lc.fillStyle = '#e0313a'; lc.fillRect(0, 0, 128, 22); lc.fillStyle = '#fff'; lc.font = 'bold 15px Inter, Arial'; lc.fillText('LiPo', 8, 16); lc.fillStyle = '#2a2a31'; lc.font = '600 11px Inter, Arial'; lc.fillText('BATTERY PACK', 8, 42); lc.fillStyle = '#2f5bff'; lc.fillRect(8, 52, 60, 6);
+  var labTex = new T.CanvasTexture(lab); labTex.encoding = T.sRGBEncoding;
+  var batSide = own(5, M(0xd8d8de, 0.5, 0.1)), batFace = own(5, M(0xffffff, 0.5, 0, { map: labTex }));
+  var bat = new T.Mesh(new T.BoxGeometry(0.058, 0.034, 0.011), [batSide, batSide, batSide, batSide, batFace, batSide]); groups[5].add(bat);
+  var bl1 = new T.Mesh(new T.CylinderGeometry(0.0012, 0.0012, 0.03, 6), leadR); bl1.position.set(0.03 + 0.012, 0.006, 0); bl1.rotation.z = Math.PI / 2; groups[5].add(bl1);
+  var bl2 = new T.Mesh(new T.CylinderGeometry(0.0012, 0.0012, 0.03, 6), M(0x111116, 0.5)); bl2.position.set(0.042, 0.0, 0); bl2.rotation.z = Math.PI / 2; groups[5].add(bl2);
+  var batA = new T.Vector3(-0.1, 0.41, 0.115), batE = new T.Vector3(-0.36, 0.62, 0.16);
+
+  // 07 harness: rebuilt as parts move
+  var COLORS = [0xff7a1a, 0x2bd17e, 0xa43cff, 0x3b8bff, 0xffd23f, 0xff4b8b, 0x22c7d6, 0xffffff];
+  var wireMats = COLORS.map(function (c) { return own(6, M(c, 0.55)); });
+  var wires = COLORS.map(function (c, i) { var m = new T.Mesh(new T.BufferGeometry(), wireMats[i]); groups[6].add(m); return m; });
+  var harnessOff = new T.Vector3();
+
+  // 08 glasses + clip (shown larger)
+  var gl = new T.Group(); groups[7].add(gl); gl.scale.setScalar(2.3);
+  function rimShape(w, h, r) { var s = new T.Shape(); s.moveTo(-w / 2 + r, -h / 2); s.lineTo(w / 2 - r, -h / 2); s.quadraticCurveTo(w / 2, -h / 2, w / 2, -h / 2 + r); s.lineTo(w / 2, h / 2 - r); s.quadraticCurveTo(w / 2, h / 2, w / 2 - r, h / 2); s.lineTo(-w / 2 + r, h / 2); s.quadraticCurveTo(-w / 2, h / 2, -w / 2, h / 2 - r); s.lineTo(-w / 2, -h / 2 + r); s.quadraticCurveTo(-w / 2, -h / 2, -w / 2 + r, -h / 2); return s; }
+  var outer = rimShape(0.054, 0.036, 0.012), inner = rimShape(0.044, 0.026, 0.008); outer.holes.push(new T.Path(inner.getPoints(24)));
+  var frameM = own(7, M(0x1a1a20, 0.35, 0.1)), lensM = new T.MeshStandardMaterial({ color: 0x9fb4ff, roughness: 0.05, transparent: true, opacity: 0.2 });
+  var rimG = new T.ExtrudeGeometry(outer, { depth: 0.006, bevelEnabled: false, curveSegments: 16 });
+  [-1, 1].forEach(function (s) {
+    var r = new T.Mesh(rimG, frameM); r.position.set(s * 0.033, 0, -0.005); gl.add(r);
+    var l = new T.Mesh(new T.ShapeGeometry(inner, 16), lensM); l.position.set(s * 0.033, 0, -0.002); gl.add(l);
+    var t = new T.Mesh(new T.BoxGeometry(0.005, 0.006, 0.105), frameM); t.position.set(s * 0.06, 0.004, -0.058); gl.add(t);
+  });
+  var br = new T.Mesh(new T.TorusGeometry(0.008, 0.0025, 8, 24, Math.PI), frameM); br.position.set(0, 0.006, -0.002); gl.add(br);
+  var clipG = new T.Group(); clipG.position.set(-0.069, 0.006, -0.04); gl.add(clipG);
+  var holderM = own(7, M(0x2a2a32, 0.55, 0.1, { transparent: true, opacity: 1 }));
+  var holder = new T.Mesh(new T.BoxGeometry(0.018, 0.024, 0.05), holderM); clipG.add(holder);
+  var pi = new T.Group(); clipG.add(pi);
+  var piB = new T.Mesh(new T.BoxGeometry(0.0025, 0.017, 0.042), own(7, M(0x1f7a3a, 0.5, 0.1))); pi.add(piB);
+  var piC = new T.Mesh(new T.BoxGeometry(0.0022, 0.008, 0.008), own(7, M(0x111116, 0.35, 0.2))); piC.position.set(-0.0024, 0.002, -0.004); pi.add(piC);
+  var piU = new T.Mesh(new T.BoxGeometry(0.003, 0.005, 0.007), own(7, M(0xb9bcc6, 0.3, 0.8))); piU.position.set(-0.0026, -0.004, -0.016); pi.add(piU);
+  var cam = new T.Group(); clipG.add(cam);
+  var camB = new T.Mesh(new T.BoxGeometry(0.012, 0.012, 0.0018), own(7, M(0x1f7a3a, 0.5, 0.1))); cam.add(camB);
+  var camL = new T.Mesh(new T.CylinderGeometry(0.0035, 0.0035, 0.004, 20), own(7, M(0x0c0c10, 0.2, 0.3))); camL.rotation.x = Math.PI / 2; camL.position.z = 0.003; cam.add(camL);
+  var camDot = new T.Mesh(new T.CylinderGeometry(0.0018, 0.0018, 0.0008, 16), own(7, new T.MeshStandardMaterial({ color: 0x2f5bff, emissive: 0x2f5bff, emissiveIntensity: 1.4 }))); camDot.rotation.x = Math.PI / 2; camDot.position.z = 0.0052; cam.add(camDot);
+  var clipCone = new T.Mesh(coneGeo(0.2, 48), beamMat(0x2f5bff, 0.2)); clipCone.position.z = 0.006; cam.add(clipCone);
+
+  root.position.y = -0.3;
+
+  // ---------- explode ----------
+  var ex = 1, exGoal = 1, lastEx = -1;
+  var tmp = new T.Vector3();
+  function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+  function stagger(t, a, b) { return ease(Math.min(1, Math.max(0, (t - a) / (b - a)))); }
+  function applyExplode(t) {
+    groups[0].position.set(0, 0.2 * stagger(t, 0, 0.7), 0);
+    groups[1].position.set(0, 0, 0);
+    var sT = stagger(t, 0.1, 0.85), mT = stagger(t, 0.2, 0.95);
+    pods.forEach(function (p) { p.g.position.copy(p.base).addScaledVector(p.dir, 0.16 * sT); });
+    coins.forEach(function (c) { c.g.position.copy(c.base).addScaledVector(c.dir, 0.07 * mT); c.g.position.y = c.base.y - 0.075 * mT; });
+    var cT = stagger(t, 0.25, 1);
+    tmp.lerpVectors(ctrlA, ctrlE, cT); groups[4].position.copy(tmp); groups[4].rotation.y = -0.65 * (1 - cT);
+    tmp.lerpVectors(batA, batE, stagger(t, 0.3, 1)); groups[5].position.copy(tmp); groups[5].rotation.y = -0.55 * (1 - stagger(t, 0.3, 1));
+    var gT = stagger(t, 0.15, 0.9);
+    groups[7].position.set(0, 0.8 + 0.2 * gT, 0.02);
+    groups[7].rotation.y = 0;
+    holder.position.x = -0.03 * stagger(t, 0.45, 1); holderM.opacity = 1 - 0.45 * stagger(t, 0.45, 1);
+    pi.position.x = -0.014 * stagger(t, 0.5, 1); cam.position.set(0, 0.002, 0.026 + 0.03 * stagger(t, 0.5, 1));
+    cones.forEach(function (c) { c.visible = t > 0.05; });
+    clipCone.visible = t > 0.05;
+    buildWires();
+  }
+  function buildWires() {
+    // each pair's lead: from its motor, along the band, to the controller terminal
+    var ctrlPos = groups[4].position;
+    for (var i = 0; i < 8; i++) {
+      var c = coins[i].g.position, p = pods[i].g.position;
+      var termLocal = new T.Vector3(-0.036 + i * 0.0095, -0.022, 0.004).applyEuler(groups[4].rotation);
+      var end = ctrlPos.clone().add(termLocal);
+      var start = c.clone().add(new T.Vector3(0, -0.006, 0));
+      var mid1 = p.clone().lerp(c, 0.5); mid1.y = Math.min(c.y, p.y) - 0.02;
+      var a1 = Math.atan2(start.x, start.z / EZ), a2 = Math.atan2(end.x, end.z / EZ);
+      var am = (a1 + a2) / 2; if (Math.abs(a1 - a2) > Math.PI) am += Math.PI;
+      var rr = bandR + 0.012 + 0.03 * ex, my = sY - 0.03 - 0.05 * ex - i * 0.003;
+      var mid2 = new T.Vector3(Math.sin(am) * rr, my, Math.cos(am) * rr * EZ);
+      var curve = new T.CatmullRomCurve3([start, mid1, mid2, end.clone().add(new T.Vector3(0, -0.015, 0.01)), end]);
+      wires[i].geometry.dispose(); wires[i].geometry = new T.TubeGeometry(curve, 48, 0.0016, 6, false);
+    }
+  }
+
+  // ---------- labels pinned to parts ----------
+  var tagsEl = document.getElementById('x3dTags');
+  var anchors = [
+    function () { return new T.Vector3(0.11, 0.47, 0.13).add(groups[0].position); },
+    function () { return new T.Vector3(bandR, sY, 0).add(groups[1].position); },
+    function () { return pods[1].g.position.clone(); },
+    function () { return coins[7].g.position.clone(); },
+    function () { return groups[4].position.clone().add(new T.Vector3(0, 0.045, 0)); },
+    function () { return groups[5].position.clone().add(new T.Vector3(0, 0.02, 0)); },
+    function () { var w = wires[4].geometry.attributes.position; if (!w) return new T.Vector3(); var j = Math.floor(w.count * 0.62); return new T.Vector3(w.getX(j), w.getY(j) - 0.02, w.getZ(j)); },
+    function () { return clipG.getWorldPosition(new T.Vector3()).sub(root.position).add(new T.Vector3(-0.02, 0.04, 0)); }
+  ];
+  var tags = PARTS.map(function (p, i) {
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'x3d-tag'; b.tabIndex = -1;
+    b.innerHTML = '<i>' + (i < 9 ? '0' : '') + (i + 1) + '</i>' + p.n.replace(' ×8', '');
+    b.addEventListener('click', function () { select(i); });
+    tagsEl.appendChild(b); return b;
+  });
+
+  function select(k) {
+    sel = k; showSpec(k);
+    partBtns.forEach(function (b) { b.setAttribute('aria-pressed', +b.dataset.k === k ? 'true' : 'false'); });
+    tags.forEach(function (t, i) { t.classList.toggle('on', i === k); });
+    mats.forEach(function (list, i) { list.forEach(function (m) { if (m.emissive && m !== emit) m.emissive.setHex(i === k ? 0x3a1468 : 0x000000); }); });
+    if (exGoal < 0.5) setExplode(1);
+  }
+  partBtns.forEach(function (b) {
+    b.addEventListener('click', function () { select(+b.dataset.k); });
+    b.addEventListener('mouseenter', function () { select(+b.dataset.k); });
+    b.addEventListener('focus', function () { select(+b.dataset.k); });
+  });
+
+  // ---------- controls ----------
+  var range = document.getElementById('x3dRange'), play = document.getElementById('x3dPlay');
+  function setExplode(v) { exGoal = v; range.value = Math.round(v * 100); play.textContent = v > 0.5 ? 'Assemble' : 'Explode'; }
+  range.addEventListener('input', function () { exGoal = range.value / 100; play.textContent = exGoal > 0.5 ? 'Assemble' : 'Explode'; });
+  play.addEventListener('click', function () { setExplode(exGoal > 0.5 ? 0 : 1); });
+
+  var yaw = 0.55, yawGoal = 0.55, tilt = 0.34, dragging = false, px = 0, lastInteract = 0, auto = true, visible = false, raf = null, hint = document.getElementById('x3dHint');
+  canvas.addEventListener('pointerdown', function (e) { dragging = true; px = e.clientX; canvas.setPointerCapture(e.pointerId); canvas.classList.add('drag'); auto = false; hint.classList.add('gone'); });
+  canvas.addEventListener('pointermove', function (e) { if (!dragging) return; yawGoal -= (e.clientX - px) * 0.009; yaw = yawGoal; px = e.clientX; lastInteract = performance.now(); });
+  function endDrag() { dragging = false; canvas.classList.remove('drag'); lastInteract = performance.now(); }
+  canvas.addEventListener('pointerup', endDrag); canvas.addEventListener('pointercancel', endDrag);
+
+  function resize() { var w = box.clientWidth, h = box.clientHeight; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); }
+  window.addEventListener('resize', resize); resize();
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches, t0 = performance.now(), firstShow = true;
+  var v3 = new T.Vector3();
+  function loop(now) {
+    raf = null; if (!visible) return;
+    var t = (now - t0) / 1000;
+    if (!dragging && !auto && now - lastInteract > 6000) auto = true;
+    if (auto && !reduce) yawGoal -= 0.0025;
+    yaw += (yawGoal - yaw) * 0.1;
+    ex += (exGoal - ex) * (reduce ? 1 : 0.07); if (Math.abs(exGoal - ex) < 0.001) ex = exGoal;
+    if (Math.abs(ex - lastEx) > 0.0005) { applyExplode(ex); lastEx = ex; }
+    var dist = 2.05 + 0.45 * ex, ty = 0.12 + 0.06 * ex;
+    var aspectFix = Math.max(1, 1.15 / camera.aspect); dist *= aspectFix;
+    camera.position.set(Math.sin(yaw) * dist * Math.cos(tilt), ty + Math.sin(tilt) * dist, Math.cos(yaw) * dist * Math.cos(tilt));
+    camera.lookAt(0, ty, 0);
+    var pulse = 0.5 + 0.5 * Math.sin(t * 3);
+    emit.emissiveIntensity = 1.2 + pulse * 1.2;
+    cones.forEach(function (c, i) { var p = 0.5 + 0.5 * Math.sin(t * 3 - i * 0.785); c.material.uniforms.uOpacity.value = ((sel === 2 ? 0.34 : 0.16) + p * 0.12) * ex; });
+    clipCone.material.uniforms.uOpacity.value = (sel === 7 ? 0.42 : 0.2) * ex;
+    renderer.render(scene, camera);
+    // labels
+    var W = box.clientWidth, H = box.clientHeight, show = ex > 0.4;
+    tags.forEach(function (tg, i) {
+      if (!show) { tg.style.opacity = 0; tg.hidden = ex < 0.05; return; }
+      tg.hidden = false;
+      v3.copy(anchors[i]()).add(root.position).project(camera);
+      var x = (v3.x * 0.5 + 0.5) * W, y = (-v3.y * 0.5 + 0.5) * H;
+      var behind = false;
+      if (i === 1 || i === 2 || i === 3) { var pp = i === 1 ? { x: 1, z: 0 } : (i === 2 ? pods[1] : coins[7]).dir; behind = (pp.x * camera.position.x + pp.z * camera.position.z) < 0; }
+      tg.style.opacity = behind ? 0 : Math.min(1, (ex - 0.4) / 0.4);
+      tg.style.transform = 'translate(' + Math.round(x + 8) + 'px,' + Math.round(y - 12) + 'px)';
+    });
+    raf = requestAnimationFrame(loop);
+  }
+  applyExplode(ex);
+  new IntersectionObserver(function (es) {
+    visible = es[0].isIntersecting;
+    if (visible && firstShow && !reduce) { firstShow = false; ex = 0; lastEx = -1; exGoal = 0; setTimeout(function () { setExplode(1); }, 500); }
+    if (visible && !raf) { resize(); raf = requestAnimationFrame(loop); }
+  }, { threshold: 0.05 }).observe(box);
+  select(sel);
+})();
+
+// ---------- vision layers: depth, segmentation, boxes, nearest point ----------
+(function () {
+  var svg = document.getElementById('visSvg'); if (!svg) return;
+  var NS = 'http://www.w3.org/2000/svg';
+  var F = 300, CX = 400, HZ = 110, CAM_H = 1.5; // focal length (px), horizon row, glasses height (m)
+  function P(X, Y, Z) { return [CX + F * X / Z, HZ + F * (CAM_H - Y) / Z]; }
+  function poly(pts) { return 'M' + pts.map(function (p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join('L') + 'Z'; }
+  // depth colormap like the real pipeline: near = indigo/blue, mid = green/yellow, far = orange/red
+  var STOPS = [[0, [52, 38, 196]], [0.16, [47, 100, 255]], [0.34, [40, 200, 210]], [0.5, [120, 220, 90]], [0.66, [245, 225, 60]], [0.82, [255, 150, 40]], [1, [225, 60, 45]]];
+  function depthCol(d) {
+    var t = Math.max(0, Math.min(1, Math.log(d / 1.0) / Math.log(9)));
+    for (var i = 1; i < STOPS.length; i++) if (t <= STOPS[i][0]) { var a = STOPS[i - 1], b = STOPS[i], k = (t - a[0]) / (b[0] - a[0]); return 'rgb(' + [0, 1, 2].map(function (j) { return Math.round(a[1][j] + (b[1][j] - a[1][j]) * k); }).join(',') + ')'; }
+    return 'rgb(225,60,45)';
+  }
+  var SEG = { floor: ['#33c48d', 'Floor'], wall: ['#7d84a0', 'Wall'], ceil: ['#b9a6f5', 'Ceiling'], door: ['#ffb020', 'Door'], person: ['#ff3d6e', 'Person'], chair: ['#2f5bff', 'Chair'], sign: ['#a43cff', 'Sign'] };
+  var CAMC = { floor: '#cbbfae', wall: '#ece7df', wallR: '#e2dcd2', ceil: '#f5f3ef', back: '#ddd6cb', door: '#8a5a3a', person: '#30343f', chair: '#f2c230', sign: '#2f5bff' };
+
+  var W = 1.4, CEIL = 2.7, BACK = 9;
+  function el(tag, attrs, parent) { var e = document.createElementNS(NS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); (parent || svg).appendChild(e); return e; }
+  var defs = el('defs', {});
+  function grad(id, x1, y1, x2, y2) { var g = el('linearGradient', { id: id, gradientUnits: 'userSpaceOnUse', x1: x1, y1: y1, x2: x2, y2: y2 }, defs); return g; }
+  // depth gradients for floor, ceiling and walls
+  function stops(g, n, fn) { for (var i = 0; i <= n; i++) { var t = i / n, s = el('stop', { offset: t, 'stop-color': fn(t) }, g); } }
+  stops(grad('dFloor', 0, HZ + F * CAM_H / BACK, 0, 500), 12, function (t) { var y = HZ + F * CAM_H / BACK + t * (500 - HZ - F * CAM_H / BACK); return depthCol(F * CAM_H / (y - HZ)); });
+  stops(grad('dCeil', 0, HZ - F * (CEIL - CAM_H) / BACK, 0, 0), 10, function (t) { var y = (HZ - F * (CEIL - CAM_H) / BACK) * (1 - t); return depthCol(F * (CEIL - CAM_H) / Math.max(1, HZ - y)); });
+  stops(grad('dWallL', CX - F * W / BACK, 0, 0, 0), 12, function (t) { var x = (CX - F * W / BACK) * (1 - t); return depthCol(F * W / Math.max(1, CX - x)); });
+  stops(grad('dWallR', CX + F * W / BACK, 0, 800, 0), 12, function (t) { var x = CX + F * W / BACK + t * (800 - CX - F * W / BACK); return depthCol(F * W / Math.max(1, x - CX)); });
+
+  var Zn = 0.35; // near clip for drawing the room
+  var room = {
+    floor: poly([P(-W, 0, Zn), P(W, 0, Zn), P(W, 0, BACK), P(-W, 0, BACK)]),
+    ceil: poly([P(-W, CEIL, Zn), P(W, CEIL, Zn), P(W, CEIL, BACK), P(-W, CEIL, BACK)]),
+    wallL: poly([P(-W, 0, Zn), P(-W, 0, BACK), P(-W, CEIL, BACK), P(-W, CEIL, Zn)]),
+    wallR: poly([P(W, 0, Zn), P(W, 0, BACK), P(W, CEIL, BACK), P(W, CEIL, Zn)]),
+    back: poly([P(-W, 0, BACK), P(W, 0, BACK), P(W, CEIL, BACK), P(-W, CEIL, BACK)])
+  };
+  var g = el('g', {});
+  var shapes = {};
+  ['floor', 'ceil', 'wallL', 'wallR', 'back'].forEach(function (k) { shapes[k] = el('path', { d: room[k] }, g); });
+  // floor tiles in camera mode (perspective lines)
+  var tiles = el('g', { stroke: 'rgba(0,0,0,.08)', 'stroke-width': 1, fill: 'none' }, g);
+  [-0.7, 0, 0.7].forEach(function (x) { var a = P(x, 0, Zn), b = P(x, 0, BACK); el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1] }, tiles); });
+  [1.5, 2.2, 3.2, 4.6, 6.5].forEach(function (z) { var a = P(-W, 0, z), b = P(W, 0, z); el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1] }, tiles); });
+  // door on the right wall
+  var DOOR = { z1: 3.3, z2: 4.2, h: 2.1 };
+  shapes.door = el('path', { d: poly([P(W, 0, DOOR.z1), P(W, 0, DOOR.z2), P(W, DOOR.h, DOOR.z2), P(W, DOOR.h, DOOR.z1)]) }, g);
+  // hanging sign: a head-level hazard
+  var SIGN = { x: -0.45, z: 2.7, y1: 1.72, y2: 2.02, w: 0.9 };
+  var sa = P(SIGN.x - SIGN.w / 2, SIGN.y2, SIGN.z), sb = P(SIGN.x + SIGN.w / 2, SIGN.y1, SIGN.z);
+  var hang = el('g', { stroke: '#555', 'stroke-width': 1.2 }, g);
+  [SIGN.x - 0.3, SIGN.x + 0.3].forEach(function (x) { var a = P(x, CEIL, SIGN.z), b = P(x, SIGN.y2, SIGN.z); el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1] }, hang); });
+  shapes.sign = el('rect', { x: sa[0], y: sa[1], width: sb[0] - sa[0], height: sb[1] - sa[1], rx: 3 }, g);
+  var signTxt = el('text', { x: (sa[0] + sb[0]) / 2, y: (sa[1] + sb[1]) / 2 + 4, 'text-anchor': 'middle', 'font-size': 11, 'font-weight': 700, fill: '#fff', 'font-family': 'Inter, Arial' }, g); signTxt.textContent = 'ROOM 214';
+  // person, standing further down the hall
+  var PERSON = { x: 0.55, z: 4.6, h: 1.72 };
+  function personPath(o) {
+    var s = F / o.z, b = P(o.x, 0, o.z), x = b[0], y = b[1];
+    function q(dx, dy) { return [x + dx * s, y - dy * s]; }
+    var pts = [q(-0.12, 0), q(-0.09, 0.8), q(-0.2, 0.85), q(-0.22, 1.38), q(-0.15, 1.46), q(-0.06, 1.48), q(-0.07, 1.52), q(-0.09, 1.62), q(-0.05, 1.71), q(0.05, 1.71), q(0.09, 1.62), q(0.07, 1.52), q(0.06, 1.48), q(0.15, 1.46), q(0.22, 1.38), q(0.2, 0.85), q(0.09, 0.8), q(0.12, 0), q(0.02, 0), q(0, 0.75), q(-0.02, 0)];
+    return poly(pts);
+  }
+  shapes.person = el('path', { d: personPath(PERSON) }, g);
+  // chair: draggable
+  var chair = { x: -0.3, z: 2.3 };
+  shapes.chair = el('path', {}, g);
+  function chairPath(o) {
+    var s = F / o.z, b = P(o.x, 0, o.z), x = b[0], y = b[1];
+    function q(dx, dy) { return (x + dx * s).toFixed(1) + ' ' + (y - dy * s).toFixed(1); }
+    return 'M' + q(-0.23, 0) + 'L' + q(-0.2, 0.44) + 'L' + q(-0.25, 0.47) + 'L' + q(-0.24, 0.9) + 'L' + q(0.24, 0.9) + 'L' + q(0.25, 0.47) + 'L' + q(0.2, 0.44) + 'L' + q(0.23, 0) + 'L' + q(0.18, 0) + 'L' + q(0.15, 0.4) + 'L' + q(-0.15, 0.4) + 'L' + q(-0.18, 0) + 'Z';
+  }
+  var hit = el('rect', { class: 'chair-hit', fill: 'transparent' }, svg);
+  // boxes and nearest point
+  var boxes = el('g', {}, svg), near = el('g', {}, svg);
+  var radar = el('g', {}, document.getElementById('visRadar'));
+  el('circle', { r: 72, fill: 'rgba(10,10,14,.78)' }, radar);
+  var wedges = [];
+  for (var i = 0; i < 8; i++) {
+    var a0 = (i * 45 - 22.5 - 90) * Math.PI / 180, a1 = (i * 45 + 22.5 - 90) * Math.PI / 180, r0 = 14, r1 = 50;
+    var d = 'M' + (Math.cos(a0) * r0) + ' ' + (Math.sin(a0) * r0) + 'L' + (Math.cos(a0) * r1) + ' ' + (Math.sin(a0) * r1) + 'A' + r1 + ' ' + r1 + ' 0 0 1 ' + (Math.cos(a1) * r1) + ' ' + (Math.sin(a1) * r1) + 'L' + (Math.cos(a1) * r0) + ' ' + (Math.sin(a1) * r0) + 'A' + r0 + ' ' + r0 + ' 0 0 0 ' + (Math.cos(a0) * r0) + ' ' + (Math.sin(a0) * r0) + 'Z';
+    wedges.push(el('path', { d: d, stroke: '#101014', 'stroke-width': 2 }, radar));
+  }
+  el('circle', { r: 9, fill: '#fff' }, radar);
+  var rl = el('text', { y: 3.5, 'text-anchor': 'middle', 'font-size': 8, 'font-weight': 800, fill: '#141419', 'font-family': 'Inter, Arial' }, radar); rl.textContent = 'YOU';
+  var rN = el('text', { y: -56, 'text-anchor': 'middle', 'font-size': 9, 'font-weight': 700, fill: '#b9b9c4', 'font-family': 'Inter, Arial' }, radar); rN.textContent = 'N';
+  var NAMES = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+
+  var mode = 'depth', togs = { boxes: true, near: true };
+  var legend = document.getElementById('visLegend'), term = document.getElementById('visTerm');
+  function level(d) { return d <= 0.5 ? ['stop', '#ff3d3d'] : d <= 1.5 ? ['warn', '#ff9a2e'] : d <= 4 ? ['sense', '#f5e13c'] : ['clear', '#3a3a44']; }
+  function bbox(o) { return o; }
+  function render() {
+    shapes.chair.setAttribute('d', chairPath(chair));
+    var objs = {
+      chair: { d: Math.hypot(chair.x, chair.z), z: chair.z },
+      person: { d: Math.hypot(PERSON.x, PERSON.z), z: PERSON.z },
+      sign: { d: Math.hypot(SIGN.x, SIGN.z, SIGN.y1 - CAM_H), z: SIGN.z },
+      door: { d: Math.hypot(W, (DOOR.z1 + DOOR.z2) / 2), z: (DOOR.z1 + DOOR.z2) / 2 }
+    };
+    // draw order: chair in front of person when closer
+    if (chair.z < PERSON.z) g.appendChild(shapes.chair); else g.insertBefore(shapes.chair, shapes.person);
+    var fills = {};
+    if (mode === 'depth') {
+      fills = { floor: 'url(#dFloor)', ceil: 'url(#dCeil)', wallL: 'url(#dWallL)', wallR: 'url(#dWallR)', back: depthCol(BACK), door: depthCol(objs.door.z), sign: depthCol(objs.sign.z), person: depthCol(objs.person.z), chair: depthCol(objs.chair.z) };
+    } else if (mode === 'seg') {
+      fills = { floor: SEG.floor[0], ceil: SEG.ceil[0], wallL: SEG.wall[0], wallR: SEG.wall[0], back: SEG.wall[0], door: SEG.door[0], sign: SEG.sign[0], person: SEG.person[0], chair: SEG.chair[0] };
+    } else {
+      fills = { floor: CAMC.floor, ceil: CAMC.ceil, wallL: CAMC.wall, wallR: CAMC.wallR, back: CAMC.back, door: CAMC.door, sign: CAMC.sign, person: CAMC.person, chair: CAMC.chair };
+    }
+    Object.keys(fills).forEach(function (k) { shapes[k].setAttribute('fill', fills[k]); shapes[k].setAttribute('stroke', mode === 'cam' ? 'rgba(0,0,0,.18)' : mode === 'seg' ? 'rgba(255,255,255,.5)' : 'none'); });
+    tiles.style.display = mode === 'cam' ? '' : 'none';
+    signTxt.style.display = mode === 'cam' ? '' : 'none';
+    hang.style.display = mode === 'cam' ? '' : 'none';
+    // legend
+    legend.innerHTML = mode === 'seg' ? ['floor', 'wall', 'door', 'person', 'chair', 'sign'].map(function (k) { return '<span style="--c:' + SEG[k][0] + '">' + SEG[k][1] + '</span>'; }).join('')
+      : mode === 'depth' ? '<span style="--c:' + depthCol(1.2) + '">Close</span><span style="--c:' + depthCol(3) + '">Mid</span><span style="--c:' + depthCol(8) + '">Far</span>' : '';
+    // boxes
+    boxes.innerHTML = '';
+    var cb = shapes.chair.getBBox(), pb = shapes.person.getBBox(), sbx = shapes.sign.getBBox(), db = shapes.door.getBBox();
+    var conf = { chair: Math.max(0.62, Math.min(0.93, 0.98 - 0.07 * objs.chair.z)), person: 0.88, sign: 0.74, door: 0.69 };
+    if (togs.boxes) [['chair', cb], ['person', pb], ['sign', sbx], ['door', db]].forEach(function (it) {
+      var b = it[1], pad = 4, col = it[0] === 'chair' ? '#7CFC6A' : '#7CFC6A';
+      el('rect', { x: b.x - pad, y: b.y - pad, width: b.width + pad * 2, height: b.height + pad * 2, fill: 'none', stroke: col, 'stroke-width': 2 }, boxes);
+      var label = it[0] + ' ' + conf[it[0]].toFixed(2), lw = label.length * 6.6 + 10, ly = Math.max(0, b.y - pad - 18);
+      el('rect', { x: b.x - pad, y: ly, width: lw, height: 17, fill: col }, boxes);
+      var tx = el('text', { x: b.x - pad + 5, y: ly + 12.5, 'font-size': 11, 'font-weight': 700, fill: '#0b2a08', 'font-family': 'ui-monospace, Menlo, Consolas, monospace' }, boxes); tx.textContent = label;
+    });
+    // nearest obstacle sets the cue
+    var best = null; ['chair', 'person', 'sign'].forEach(function (k) { if (!best || objs[k].d < objs[best].d) best = k; });
+    var bd = objs[best].d, bx = best === 'chair' ? chair.x : best === 'person' ? PERSON.x : SIGN.x, bz = objs[best].z;
+    var bearing = Math.atan2(bx, bz) * 180 / Math.PI, sector = ((Math.round(bearing / 45) % 8) + 8) % 8, lv = level(bd);
+    near.innerHTML = '';
+    if (togs.near) {
+      var nb = best === 'chair' ? cb : best === 'person' ? pb : sbx;
+      var nx = nb.x + nb.width / 2, ny = best === 'sign' ? nb.y + nb.height : nb.y + nb.height * 0.72;
+      el('circle', { cx: nx, cy: ny, r: 9, fill: 'none', stroke: '#ff2d2d', 'stroke-width': 2.2 }, near);
+      el('path', { d: 'M' + (nx - 14) + ' ' + ny + 'h28M' + nx + ' ' + (ny - 14) + 'v28', stroke: '#ff2d2d', 'stroke-width': 2 }, near);
+      var lbl = bd.toFixed(2) + ' m', lw2 = lbl.length * 8 + 14;
+      el('rect', { x: nx + 13, y: ny - 27, width: lw2, height: 21, rx: 10.5, fill: '#ff2d2d' }, near);
+      var t = el('text', { x: nx + 13 + lw2 / 2, y: ny - 12.5, 'text-anchor': 'middle', 'font-size': 13, 'font-weight': 800, fill: '#fff', 'font-family': 'Inter, Arial' }, near); t.textContent = lbl;
+    }
+    wedges.forEach(function (w, i) { w.setAttribute('fill', i === sector ? lv[1] : i === 7 || i === 0 || i === 1 ? 'rgba(255,255,255,.14)' : 'rgba(255,255,255,.06)'); });
+    rN.textContent = NAMES[sector] + ' ' + bd.toFixed(2) + ' m';
+    term.innerHTML = '<span>nearest</span> ' + best + ' · ' + bd.toFixed(2) + ' m · ' + NAMES[sector] + ' <span>→</span> ' + lv[0];
+    // hit area for dragging the chair
+    hit.setAttribute('x', cb.x - 10); hit.setAttribute('y', cb.y - 10); hit.setAttribute('width', cb.width + 20); hit.setAttribute('height', cb.height + 20);
+    document.querySelectorAll('#pipe li').forEach(function (li) { var s = li.dataset.step; li.classList.toggle('hot', s === mode || !!togs[s]); });
+  }
+  // dragging maps the pointer to a point on the floor
+  function toSvg(e) { var pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); }
+  function toFloor(e) {
+    var s = toSvg(e), sx = s.x, sy = s.y;
+    var z = F * CAM_H / Math.max(20, sy - HZ); z = Math.max(1.15, Math.min(5.5, z));
+    var x = (sx - CX) * z / F; x = Math.max(-1.05, Math.min(1.05, x));
+    return { x: x, z: z };
+  }
+  var dragging = false, off = null;
+  svg.addEventListener('pointerdown', function (e) {
+    var f = toFloor(e), cb = shapes.chair.getBBox(), s = toSvg(e), sx = s.x, sy = s.y;
+    var onChair = sx > cb.x - 12 && sx < cb.x + cb.width + 12 && sy > cb.y - 12 && sy < cb.y + cb.height + 12;
+    if (e.pointerType === 'touch' && !onChair) return; // let phones scroll unless the chair itself is grabbed
+    dragging = true; svg.setPointerCapture(e.pointerId); svg.classList.add('drag');
+    // grabbing the chair keeps the grab offset; tapping the floor moves it there
+    off = onChair ? { x: chair.x - f.x, z: chair.z - f.z } : { x: 0, z: 0 };
+    if (!onChair) { chair.x = f.x; chair.z = f.z; render(); }
+  });
+  svg.addEventListener('pointermove', function (e) { if (!dragging) return; var f = toFloor(e); chair.x = Math.max(-1.05, Math.min(1.05, f.x + off.x)); chair.z = Math.max(1.15, Math.min(5.5, f.z + off.z)); render(); });
+  function end() { dragging = false; svg.classList.remove('drag'); }
+  svg.addEventListener('pointerup', end); svg.addEventListener('pointercancel', end);
+  svg.addEventListener('keydown', function (e) {
+    var k = e.key, m = { ArrowLeft: [-0.1, 0], ArrowRight: [0.1, 0], ArrowUp: [0, 0.15], ArrowDown: [0, -0.15] }[k];
+    if (!m) return; e.preventDefault(); e.stopPropagation();
+    chair.x = Math.max(-1.05, Math.min(1.05, chair.x + m[0])); chair.z = Math.max(1.15, Math.min(5.5, chair.z + m[1])); render();
+  });
+  document.querySelectorAll('.vis-ctl button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (b.dataset.mode) { mode = b.dataset.mode; document.querySelectorAll('.vis-ctl [data-mode]').forEach(function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); }); }
+      else { togs[b.dataset.tog] = !togs[b.dataset.tog]; b.setAttribute('aria-pressed', togs[b.dataset.tog] ? 'true' : 'false'); }
+      render();
+    });
+  });
+  render();
+})();
+</script>
+
+</body>
+</html>
