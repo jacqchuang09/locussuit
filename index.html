@@ -929,16 +929,16 @@ html.thumbs .rail-key i { display: inline-block !important; order: -1; width: 4p
       <p class="lede reveal" style="--d:2; margin-top:10px;">Drag the chair anywhere in the hall. Switch layers to see each step.</p>
       <div class="vis-ctl reveal" style="--d:3" role="group" aria-label="Vision layers" id="visCtl">
         <button type="button" data-mode="cam" aria-pressed="true">Camera</button>
-        <button type="button" data-mode="depth" aria-pressed="false">Depth</button>
-        <button type="button" data-mode="seg" aria-pressed="false">Segmentation</button>
         <button type="button" class="tog" data-tog="boxes" aria-pressed="false">Boxes</button>
         <button type="button" class="tog" data-tog="near" aria-pressed="false">Nearest point</button>
+        <button type="button" data-mode="seg" aria-pressed="false">Segmentation</button>
+        <button type="button" data-mode="depth" aria-pressed="false">Depth</button>
       </div>
       <ol class="pipe reveal" style="--d:4" id="pipe">
-        <li data-step="depth"><div><b>Depth from one camera</b><small>Every pixel gets a distance. Blue is close, red is far.</small></div></li>
-        <li data-step="seg"><div><b>Segmentation</b><small>Floor, wall, door, person, chair and sign.</small></div></li>
         <li data-step="boxes"><div><b>Detection boxes</b><small>A box, a label and a confidence score.</small></div></li>
         <li data-step="near"><div><b>Nearest point to a cue</b><small>Picks which side buzzes, and how hard.</small></div></li>
+        <li data-step="seg"><div><b>Segmentation</b><small>Floor, wall, door, person, chair and sign.</small></div></li>
+        <li data-step="depth"><div><b>Depth from one camera</b><small>Every pixel gets a distance. Blue is close, red is far.</small></div></li>
       </ol>
     </div>
   </div>
