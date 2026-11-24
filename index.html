@@ -766,7 +766,7 @@ table.cmp { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 
 .bm-tl .when { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #d7a6ff; }
 .bm-tl h3 { margin: 6px 0 4px; font-size: 22px; color: #fff; }
 .bm-tl p { margin: 0; font-size: 14.5px; color: rgba(255,255,255,.7); max-width: 22em; }
-@media (max-width: 900px) { .bm-stats, .bm-tl { grid-template-columns: 1fr; } .bm-stats > div + div { padding-left: 0; border-left: 0; border-top: 1px solid rgba(255,255,255,.14); padding-top: 18px; margin-top: 18px; } .bm-tl::before { left: 6px; right: auto; top: 0; bottom: 0; width: 2px; height: auto; } .bm-tl li { padding: 0 0 0 30px; } }
+@media (max-height: 800px) and (min-width: 900px) { @media (max-width: 900px) { .bm-stats, .bm-tl { grid-template-columns: 1fr; } .bm-stats > div + div { padding-left: 0; border-left: 0; border-top: 1px solid rgba(255,255,255,.14); padding-top: 18px; margin-top: 18px; } .bm-tl::before { left: 6px; right: auto; top: 0; bottom: 0; width: 2px; height: auto; } .bm-tl li { padding: 0 0 0 30px; } }
 @media (max-height: 800px) and (min-width: 900px) { .bm-stats { margin-top: 26px; } .bm-tl { margin-top: 36px; } }
 
 /* team + on the road: team photo in the middle, events around it */
@@ -813,12 +813,13 @@ html.thumbs .rail { gap: 5px; top: calc(50% + var(--nav-h, 64px) / 2 + 6px); }
 html.thumbs .rail i, html.thumbs .rail b { display: none !important; }
 .rail .th { display: none; }
 html.thumbs .rail .th { display: block; width: var(--thw, 58px); height: calc(var(--thw, 58px) * .625); background: #eee center / cover no-repeat; border-radius: 2px; box-shadow: 0 0 0 1px rgba(0,0,0,.14), 0 1px 3px rgba(0,0,0,.08); opacity: .5; filter: saturate(.7); transition: opacity .2s, transform .2s, box-shadow .2s, filter .2s; transform-origin: right center; }
-html.thumbs .rail a:hover .th, html.thumbs .rail a:focus-visible .th { opacity: 1; filter: none; transform: scale(2.6); position: relative; z-index: 2; box-shadow: 0 0 0 1px rgba(0,0,0,.2), 0 8px 24px rgba(0,0,0,.25); }
+html.thumbs .rail a:hover .th, html.thumbs .rail a:focus-visible .th { opacity: 1; filter: none; box-shadow: 0 0 0 2px var(--violet); }
 html.thumbs .rail a.on .th { opacity: 1; filter: none; transform: scale(1.18); box-shadow: 0 0 0 2px var(--violet), 0 3px 10px rgba(0,0,0,.2); }
-html.thumbs .rail a.on:hover .th { transform: scale(2.6); }
+html.thumbs .rail a.on:hover .th { transform: scale(1.18); }
 html.thumbs .rail.light .th, html.thumbs .rail.dark .th { box-shadow: 0 0 0 1px rgba(255,255,255,.3); }
 html.thumbs .rail.light a.on .th, html.thumbs .rail.dark a.on .th { box-shadow: 0 0 0 2px #fff, 0 3px 10px rgba(0,0,0,.3); }
-html.thumbs .rail a:hover span { right: calc(100% + var(--thw, 58px) * 1.6 + 10px); }
+html.thumbs .rail.light a:hover .th, html.thumbs .rail.dark a:hover .th { box-shadow: 0 0 0 2px #fff; }
+html.thumbs .rail a:hover span { right: calc(100% + 8px); }
 html.thumbs .rail li.core a { position: relative; }
 html.thumbs .rail li.core a::before { content: ""; position: absolute; left: -9px; top: 50%; width: 4px; height: 4px; margin-top: -2px; border-radius: 50%; background: var(--violet); opacity: .8; }
 html.thumbs.tour .rail li.core a::before { display: none; }
@@ -2306,6 +2307,4 @@ window.__DEMO = { tabs: [
   new MutationObserver(fit).observe(d, { attributes: true, attributeFilter: ['class'] });
 })();
 </script>
-
-</body>
-</html>
+</body></html>
