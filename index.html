@@ -825,6 +825,32 @@ html.thumbs .rail li.core a::before { content: ""; position: absolute; left: -9p
 html.thumbs.tour .rail li.core a::before { display: none; }
 html.thumbs .rail-key i { display: inline-block !important; order: -1; width: 4px !important; height: 4px !important; border-radius: 50%; border: 0 !important; background: var(--violet) !important; box-shadow: none !important; }
 @media (min-width: 900px) and (max-width: 1640px) { html.thumbs main .wrap { padding-right: calc(var(--thw, 58px) + 30px); } }
+
+/* showcase: tap the photo to swap in the community-day collage */
+.flipwall { cursor: pointer; }
+.flipwall .photo { width: 100%; transition: opacity .5s ease, transform .6s cubic-bezier(.2,.7,.2,1), filter .3s; }
+.flipwall .zoo { position: absolute; inset: 0; display: grid; min-height: 0; grid-template-columns: 1.35fr 1fr .72fr; grid-template-rows: 1fr 1fr; gap: 8px; padding: 8px; background: var(--bg); pointer-events: none; opacity: 0; transition: opacity .35s ease; }
+.flipwall .zoo figure { margin: 0; min-height: 0; overflow: hidden; border-radius: calc(var(--r) - 10px); opacity: 0; transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(.6); transition: transform .7s cubic-bezier(.2,.8,.2,1), opacity .45s ease; transition-delay: var(--dl); }
+.flipwall .zoo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.flipwall .z1 { grid-column: 1; grid-row: 1 / 3; --tx: -40%; --ty: 10%; --rot: -8deg; --dl: 0ms; }
+.flipwall .z1 img { object-position: 45% 40%; }
+.flipwall .z2 { grid-column: 2; grid-row: 1; --tx: 20%; --ty: -60%; --rot: 6deg; --dl: 90ms; }
+.flipwall .z2 img { object-position: 50% 35%; }
+.flipwall .z3 { grid-column: 2; grid-row: 2; --tx: -10%; --ty: 60%; --rot: -5deg; --dl: 160ms; }
+.flipwall .z3 img { object-position: 50% 30%; }
+.flipwall .z4 { grid-column: 3; grid-row: 1 / 3; --tx: 50%; --ty: -10%; --rot: 9deg; --dl: 230ms; }
+.flipwall .z4 img { object-position: 50% 45%; }
+.flipwall .ztag { position: absolute; right: 18px; top: 18px; background: rgba(20,20,25,.74); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: #fff; font-size: 13px; font-weight: 700; padding: 6px 14px; border-radius: 999px; opacity: 0; transition: opacity .4s ease .35s; }
+.flipwall.on .photo { opacity: 0; transform: scale(.96); }
+.flipwall.on .zoo { opacity: 1; }
+.flipwall.on .zoo figure { opacity: 1; transform: none; }
+.flipwall.on .ztag { opacity: 1; }
+.flipwall.on:hover .photo { filter: none; }
+.flipwall .wplay { z-index: 2; text-decoration: none; color: #fff; }
+.flipwall.on .wplay { opacity: 0; pointer-events: none; }
+.flipwall .wplay:hover .play { transform: scale(1.08); }
+@media (max-width: 600px) { .flipwall .zoo { gap: 4px; padding: 4px; } .flipwall .zoo figure { border-radius: 10px; } .flipwall .ztag { font-size: 10.5px; padding: 3px 9px; right: 8px; top: auto; bottom: 8px; } }
+@media (prefers-reduced-motion: reduce) { .flipwall .zoo figure { transition: opacity .2s; transform: none; } }
 </style>
 </head>
 <body>
@@ -1077,7 +1103,13 @@ html.thumbs .rail-key i { display: inline-block !important; order: -1; width: 4p
       <div><ul class="pills reveal"><li class="pill">McKelvey Showcase</li></ul><h2 class="reveal" style="--d:1; margin-top:16px;"><span class="gt">50+</span> user testing sessions.</h2></div>
       <p class="small reveal" style="--d:2; max-width:32em;">Students, older adults and Clayton community members wore the vest and glasses through real hallways, while a live display showed which motors fired. At the Council of the Blind, testers asked to buy units once available.</p>
     </div>
-    <a class="watch reveal" style="--d:2" href="https://www.youtube.com/watch?v=IDM4owhf4fY" target="_blank" rel="noopener" aria-label="Watch the Locus Suit video on YouTube"><img class="photo" src="media/showcase.jpg" alt="McKelvey Showcase: a tester wearing the vest and glasses beside monitors showing the live haptic and depth display" width="1634" height="554" loading="lazy"><span class="wplay"><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg></span><b>See it in action</b><small>Watch on YouTube</small></span></a>
+    <div class="watch flipwall reveal" style="--d:2" role="button" tabindex="0" aria-pressed="false" aria-label="Show photos from In St. Louis for St. Louis"><img class="photo" src="media/showcase.jpg" alt="McKelvey Showcase: a tester wearing the vest and glasses beside monitors showing the live haptic and depth display" width="1634" height="554" loading="lazy"><div class="zoo" aria-hidden="true">
+        <figure class="z1"><img src="media/zoo-1.webp" alt="" loading="lazy"></figure>
+        <figure class="z2"><img src="media/zoo-2.webp" alt="" loading="lazy"></figure>
+        <figure class="z3"><img src="media/zoo-3.webp" alt="" loading="lazy"></figure>
+        <figure class="z4"><img src="media/zoo-4.webp" alt="" loading="lazy"></figure>
+        <span class="ztag">In St. Louis for St. Louis</span>
+      </div><a class="wplay" href="https://www.youtube.com/watch?v=IDM4owhf4fY" target="_blank" rel="noopener"><span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg></span><b>See it in action</b><small>Watch on YouTube</small></a></div>
     <div class="talk reveal" style="--d:3">
       <div class="card ink"><div class="stat">50+</div><div class="stat-l">user testing sessions</div></div>
       <div class="card"><div class="stat">32</div><div class="stat-l">older adults with vision loss surveyed</div></div>
@@ -2305,6 +2337,14 @@ window.__DEMO = { tabs: [
   }
   fit(); window.addEventListener('resize', fit);
   new MutationObserver(fit).observe(d, { attributes: true, attributeFilter: ['class'] });
+})();
+</script>
+<script>
+(function () {
+  var w = document.querySelector('#showcase .flipwall'); if (!w) return;
+  function t() { var on = !w.classList.contains('on'); w.classList.toggle('on', on); w.setAttribute('aria-pressed', on ? 'true' : 'false'); }
+  w.addEventListener('click', function (e) { if (e.target.closest('a')) return; t(); });
+  w.addEventListener('keydown', function (e) { if ((e.key === 'Enter' || e.key === ' ') && !e.target.closest('a')) { e.preventDefault(); t(); } });
 })();
 </script>
 </body></html>
